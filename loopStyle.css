@@ -1,0 +1,35 @@
+table {
+  width: 100%;
+  border: thick solid;
+  border-color: blue;
+}
+
+.textbox {
+  float: right;
+}
+
+.titlebar {
+  background: blue;
+  color:yellow;
+  font-size: 24pt;
+  text-align: center;
+}
+
+#id-middlerow {
+  height: 500px;
+}
+
+#id-middleleft {
+  width: 60%;
+  vertical-align: top;
+}
+
+#html-console {
+  height: 500px;
+  overflow: scroll;
+}
+
+#id-middleright {
+  font-size:16pt;
+  vertical-align: top
+}
