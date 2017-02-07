@@ -1,7 +1,12 @@
+body{
+  background-color: gray;
+}
+
 table {
   width: 100%;
   border: thick solid;
   border-color: blue;
+  background-color: white;
 }
 
 .textbox {
