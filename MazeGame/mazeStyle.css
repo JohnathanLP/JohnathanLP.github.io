@@ -1,0 +1,42 @@
+table {
+
+}
+
+body {
+  background-color: grey;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+#id-maze {
+  width: 500px;
+  height: 500px;
+  border: thick solid;
+}
+
+#id-left {
+  width: 200px;
+  text-align: right;
+  vertical-align: top;
+  font-size: 20px;
+}
+
+#id-right {
+  width: 200px;
+  vertical-align: top;
+  font-size: 20px;
+}
+
+#id-sizebuttons {
+  width: 150px;
+}
+
+#id-header {
+  font-size: 30px;
+  width: 100%;
+  text-align: center;
+}

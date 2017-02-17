@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+<head>
+  <meta charset="UTF-8">
+  <title> Maze Game </title>
+  <script src="gameLoop.js"></script>
+  <link rel="stylesheet" type="text/css" href="mazeStyle.css">
+</head>
+<body onload="myGame.initialize()">
+  <table>
+    <tr>
+      <td id=id-header colspan="3"> ESCAPE THE MAZE </td>
+    </tr>
+    <tr>
+      <td id=id-left>
+        Find your way through the maze! </br>
+        Give up? Find some help on the right! </br>
+        </br>
+        Hint will show you which direction to go </br>
+        </br>
+        Bread crumbs will show you where you have been </br>
+        </br>
+        Solution will show you where to go </br>
+      </td>
+      <td id=id-maze>
+        <canvas id = "canvas-main" width = "98" height = "98"></canvas>
+      </td>
+      <td id=id-right>
+        New Maze: </br>
+        <button id=id-sizebuttons onclick="myGame.newMaze(5)"> 5x5 </button> </br>
+        <button id=id-sizebuttons onclick="myGame.newMaze(10)"> 10x10 </button> </br>
+        <button id=id-sizebuttons onclick="myGame.newMaze(15)"> 15x15 </button> </br>
+        <button id=id-sizebuttons onclick="myGame.newMaze(20)"> 20x20 </button> </br>
+        </br>
+        </br>
+        Stuck? </br>
+        <button id=id-sizebuttons> Toggle Hint </button> </br>
+        <button id=id-sizebuttons> Toggle Bread Crumbs </button> </br>
+        <button id=id-sizebuttons> Toggle Solution </button> </br>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
