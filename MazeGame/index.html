@@ -7,14 +7,14 @@
   <link rel="stylesheet" type="text/css" href="mazeStyle.css">
 </head>
 <body onload="myGame.initialize()">
-  <table>
+  <table align=center>
     <tr>
       <td id=id-header colspan="3"> ESCAPE THE MAZE </td>
     </tr>
     <tr>
       <td id=id-left>
         Controls: </br>
-        Use <b> WASD, IJKL or Arrow Keys </b> move character </br>
+        Use <b> WASD, IJKL or Arrow Keys </b> move character </br> </br>
         <b>B</b> <i> toggle breadcrumbs; shows where you have been </i> </br>
         <b>H</b> <i> toggle a hint; shows the next move you should make </i> </br>
         <b>P</b> <i> toggle the solution; shows the path to the finish </i> </br>
@@ -31,7 +31,8 @@
         <button id=id-sizebuttons onclick="myGame.newMaze(15)"> 15x15 </button> </br>
         <button id=id-sizebuttons onclick="myGame.newMaze(20)"> 20x20 </button> </br>
         </br></br>
-        Score: <p1 id=id-score>  </p1></br>
+        <button id=id-scoretoggle onclick='myGame.toggleScore()'> Toggle Score </button></br>
+        <p1 id=id-scorelabel>Score:</p1> <p1 id=id-score>  </p1></br>
       </td>
     </tr>
   </table>

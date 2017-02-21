@@ -107,7 +107,7 @@ let myGame = (function(){
     center: {x:1, y:8},
     clip: {x:0, y:0, w:3, h:16},
     width: 3,
-    height: 3,
+    height: 16,
     rotation: 0
   })
 
@@ -116,7 +116,7 @@ let myGame = (function(){
     center: {x:1, y:8},
     clip: {x:4, y:0, w:3, h:16},
     width: 3,
-    height: 3,
+    height: 16,
     rotation: 0
   })
 
@@ -156,6 +156,15 @@ let myGame = (function(){
     rotation: 0
   })
 
+  let crumbDot = Graphics.Texture({
+    imageSource: 'maze_texture.png',
+    center: {x:2, y:2},
+    clip: {x:30, y:12, w:4, h:4},
+    width: 4,
+    height: 4,
+    rotation: 0
+  })
+
   let hintDot = Graphics.Texture({
     imageSource: 'maze_texture.png',
     center: {x:2, y:2},
@@ -171,6 +180,8 @@ let myGame = (function(){
   var wallArray = []; //Stores all walls of the maze
   //used to help solve maze, give hints, etc.
   var solArray = [];
+  //keeps track of where you have been, used for breadcrumbs and score
+  var crumbArray = [];
 
   //Size of mazeArray
   var wide=9;
@@ -187,6 +198,7 @@ let myGame = (function(){
   var showSol = false;
   var showHint = false;
   var showCrumb = false;
+  var showScore = true;
 
   var score = 0;
 
@@ -208,17 +220,22 @@ let myGame = (function(){
     }
 
     solArray.splice(0,solArray.length);
+    crumbArray.splice(0,solArray.length);
 
     for(var i=0; i<mazeSize; i++){
       solArray.push(new Array(mazeSize));
+      crumbArray.push(new Array(mazeSize));
     }
 
     //also intitializes the solArray
     for(var i=0; i<mazeSize; i++){
       for(var j=0; j<mazeSize; j++){
         solArray[i][j] = -1;
+        crumbArray[i][j] = 0;
       }
     }
+
+    crumbArray[0][0] = 1;
 
     //set starting space to cell
     mazeArray[startX][startY] = 1;
@@ -399,7 +416,24 @@ let myGame = (function(){
     //generates a new maze
     generateMaze();
 
-    printSol();
+    //printSol();
+  }
+
+  that.toggleScore = function(){
+    if(showScore){
+      var scoreDisplay = document.getElementById('id-score');
+      scoreDisplay.style.display = 'none';
+      var scoreLabel = document.getElementById('id-scorelabel');
+      scoreLabel.style.display = 'none';
+      showScore = false;
+    }
+    else{
+      var scoreDisplay = document.getElementById('id-score');
+      scoreDisplay.style.display = 'inline';
+      var scoreLabel = document.getElementById('id-scorelabel');
+      scoreLabel.style.display = 'inline';
+      showScore = true;
+    }
   }
 
   function drawSol(){
@@ -420,6 +454,16 @@ let myGame = (function(){
       }
 
       solDot.draw(9+(19*solX),9+(19*solY));
+    }
+  }
+
+  function drawCrumbs(){
+    for(var i=0; i<mazeSize; i++){
+      for(var j=0; j<mazeSize; j++){
+        if(crumbArray[i][j] == 1){
+          crumbDot.draw(9+(19*i),9+(19*j));
+        }
+      }
     }
   }
 
@@ -504,6 +548,9 @@ let myGame = (function(){
       if(inputQueue[input] == 72){
         showHint = !showHint;
       }
+      if(inputQueue[input] == 66){
+        showCrumb = !showCrumb;
+      }
       moveCharacter(inputQueue[input]);
   		console.log(inputQueue[input]);
   	}
@@ -513,7 +560,7 @@ let myGame = (function(){
   function moveCharacter(input){
     if(!solved){
       //up
-      if(input == 38){
+      if(input == 38 || input == 87 || input == 73){
         if(playY > 0){
           if(mazeArray[playX*2][(playY*2)-1] == 1){
             playY--;
@@ -521,7 +568,7 @@ let myGame = (function(){
         }
       }
       //down
-      if(input == 40){
+      if(input == 40 || input == 75 || input == 83){
         if(playY < mazeSize-1){
           if(mazeArray[playX*2][(playY*2)+1] == 1){
             playY++;
@@ -529,7 +576,7 @@ let myGame = (function(){
         }
       }
       //right
-      if(input == 39){
+      if(input == 39 || input == 76 || input == 68){
         if(playX < mazeSize-1){
           if(mazeArray[(playX*2)+1][playY*2] == 1){
             playX++;
@@ -537,7 +584,7 @@ let myGame = (function(){
         }
       }
       //left
-      if(input == 37){
+      if(input == 37 || input == 65 || input == 74){
         if(playX > 0){
           if(mazeArray[(playX*2)-1][playY*2] == 1){
             playX--;
@@ -547,6 +594,7 @@ let myGame = (function(){
       if(playX == mazeSize-1 && playY == mazeSize-1){
         solved = true;
       }
+      crumbArray[playX][playY] = 1;
     }
   }
 
@@ -554,13 +602,16 @@ let myGame = (function(){
     Graphics.beginRender();
     document.getElementById('id-score').innerHTML = score;
     drawMaze(mazeSize);
-    drawPlayer();
     if(showSol){
       drawSol();
     }
     if(showHint){
       drawHint();
     }
+    if(showCrumb){
+      drawCrumbs();
+    }
+    drawPlayer();
   }
 
   function gameLoop(){
