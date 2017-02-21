@@ -13,14 +13,13 @@
     </tr>
     <tr>
       <td id=id-left>
-        Find your way through the maze! </br>
-        Give up? Find some help on the right! </br>
-        </br>
-        Hint will show you which direction to go </br>
-        </br>
-        Bread crumbs will show you where you have been </br>
-        </br>
-        Solution will show you where to go </br>
+        Controls: </br>
+        Use <b> WASD, IJKL or Arrow Keys </b> move character </br>
+        <b>B</b> <i> toggle breadcrumbs; shows where you have been </i> </br>
+        <b>H</b> <i> toggle a hint; shows the next move you should make </i> </br>
+        <b>P</b> <i> toggle the solution; shows the path to the finish </i> </br>
+        </br></br>
+
       </td>
       <td id=id-maze>
         <canvas id = "canvas-main" width = "98" height = "98"></canvas>
@@ -31,12 +30,6 @@
         <button id=id-sizebuttons onclick="myGame.newMaze(10)"> 10x10 </button> </br>
         <button id=id-sizebuttons onclick="myGame.newMaze(15)"> 15x15 </button> </br>
         <button id=id-sizebuttons onclick="myGame.newMaze(20)"> 20x20 </button> </br>
-        <button id=id-sizebuttons onclick="myGame.newMaze(3)"> Testing </button> </br>
-        </br></br>
-        Stuck? </br>
-        <button id=id-sizebuttons> Toggle Hint </button> </br>
-        <button id=id-sizebuttons> Toggle Bread Crumbs </button> </br>
-        <button id=id-sizebuttons> Toggle Solution </button> </br>
         </br></br>
         Score: <p1 id=id-score>  </p1></br>
       </td>

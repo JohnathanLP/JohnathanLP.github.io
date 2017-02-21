@@ -147,6 +147,24 @@ let myGame = (function(){
     rotation: 0
   })
 
+  let solDot = Graphics.Texture({
+    imageSource: 'maze_texture.png',
+    center: {x:2, y:2},
+    clip: {x:25, y:12, w:4, h:4},
+    width: 4,
+    height: 4,
+    rotation: 0
+  })
+
+  let hintDot = Graphics.Texture({
+    imageSource: 'maze_texture.png',
+    center: {x:2, y:2},
+    clip: {x:35, y:12, w:4, h:4},
+    width: 4,
+    height: 4,
+    rotation: 0
+  })
+
   //Stores maze
   var mazeArray = []; //holds a 0 for empty spaces, a 1 for full spaces
   //Used for maze generation
@@ -165,6 +183,10 @@ let myGame = (function(){
 
   //Sets to true if maze is solved, prevents further movement
   var solved = false;
+
+  var showSol = false;
+  var showHint = false;
+  var showCrumb = false;
 
   var score = 0;
 
@@ -380,6 +402,42 @@ let myGame = (function(){
     printSol();
   }
 
+  function drawSol(){
+    var solX = playX;
+    var solY = playY;
+    while(solX != mazeSize-1 || solY != mazeSize-1){
+      if(solArray[solX][solY] == 0){
+        solY--;
+      }
+      else if(solArray[solX][solY] == 1){
+        solX++;
+      }
+      else if(solArray[solX][solY] == 2){
+        solY++;
+      }
+      else if(solArray[solX][solY] == 3){
+        solX--;
+      }
+
+      solDot.draw(9+(19*solX),9+(19*solY));
+    }
+  }
+
+  function drawHint(){
+    if(solArray[playX][playY] == 0){
+      hintDot.draw(9+(19*playX),9+(19*(playY-1)));
+    }
+    else if(solArray[playX][playY] == 1){
+      hintDot.draw(9+(19*(playX+1)),9+(19*playY));
+    }
+    else if(solArray[playX][playY] == 2){
+      hintDot.draw(9+(19*playX),9+(19*(playY+1)));
+    }
+    else if(solArray[playX][playY] == 3){
+      hintDot.draw(9+(19*(playX-1)),9+(19*playY));
+    }
+  }
+
   function drawMaze(size){
     //fills in corners
     for(var i=0; i<(size+1); i++){
@@ -440,8 +498,14 @@ let myGame = (function(){
 
   function processInput() {
   	for (input in inputQueue) {
+      if(inputQueue[input] == 80){
+        showSol = !showSol;
+      }
+      if(inputQueue[input] == 72){
+        showHint = !showHint;
+      }
       moveCharacter(inputQueue[input]);
-  		//console.log(inputQueue[input]);
+  		console.log(inputQueue[input]);
   	}
   	inputQueue = {};
   }
@@ -491,6 +555,12 @@ let myGame = (function(){
     document.getElementById('id-score').innerHTML = score;
     drawMaze(mazeSize);
     drawPlayer();
+    if(showSol){
+      drawSol();
+    }
+    if(showHint){
+      drawHint();
+    }
   }
 
   function gameLoop(){
