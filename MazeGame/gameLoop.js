@@ -1,5 +1,4 @@
-//initialize'use strict';
-
+//graphics library
 let Graphics = (function(){
   let context = null;
 
@@ -16,34 +15,28 @@ let Graphics = (function(){
   }
 
   function Texture(spec) {
-    var that = {},
-        ready = false,
-        image = new Image();
+    var that = {};
+    var ready = false;
+    var image = new Image();
 
-    image.onload = () => {
+    image.onload = function(){
       ready = true;
     };
     image.src = spec.imageSource;
 
-    that.update = function(){
-
-    }
-
     that.draw = function(xLoc, yLoc){
       if(ready){
         context.save();
-        context.translate(spec.center.x, spec.center.y);
-        context.rotate(spec.rotation);
-        context.translate(-spec.center.x, -spec.center.y);
+        //not needed unless you want to rotate textures
+        // context.translate(spec.center.x, spec.center.y);
+        // context.rotate(spec.rotation);
+        // context.translate(-spec.center.x, -spec.center.y);
 
         context.drawImage(
           image,
-          spec.clip.x,
-          spec.clip.y,
-          spec.clip.w,
-          spec.clip.h,
-          xLoc,
-          yLoc,
+          spec.clip.x, spec.clip.y,
+          spec.clip.w, spec.clip.h,
+          xLoc, yLoc,
           spec.clip.w, spec.clip.h);
 
         context.restore();
@@ -65,18 +58,13 @@ let Graphics = (function(){
 
 let myGame = (function(){
   let that = {};
-  let previousTime = performance.now();
-  let elapsedTime = 0;
+  //Size of maze in terms of cells
   let mazeSize = 5;
 
-  let myTexture = Graphics.Texture({
-    imageSource: 'maze_texture.png',
-    center: {x:32, y:16},
-    clip: {x:0, y:0, w:32, h:32},
-    width: 64,
-    height: 32,
-    rotation: 0
-  })
+  let playX = 0;
+  let playY = 0;
+
+  let inputQueue = {};
 
   let floorCell = Graphics.Texture({
     imageSource: 'maze_texture.png',
@@ -150,14 +138,35 @@ let myGame = (function(){
     rotation: 0
   })
 
-  var mazeArray = []; //holds a 0 for empty spaces, a 1 for full spaces
-  var wallArray = []; //Stores all walls of the maze
+  let playerOrb = Graphics.Texture({
+    imageSource: 'maze_texture.png',
+    center: {x:8, y:8},
+    clip: {x:8, y:16, w:16, h:16},
+    width: 16,
+    height: 16,
+    rotation: 0
+  })
 
+  //Stores maze
+  var mazeArray = []; //holds a 0 for empty spaces, a 1 for full spaces
+  //Used for maze generation
+  var wallArray = []; //Stores all walls of the maze
+  //used to help solve maze, give hints, etc.
+  var solArray = [];
+
+  //Size of mazeArray
   var wide=9;
   var high=9;
 
-  var startX=0;
-  var startY=0;
+  //Position of start (Currently used only for generation)
+  //THIS IS ACTUALLY THE END OF THE MAZE
+  var startX=8;
+  var startY=8;
+
+  //Sets to true if maze is solved, prevents further movement
+  var solved = false;
+
+  var score = 0;
 
   /*Takes height and width in terms of cells only! This means that the actual
   array will end up being (2*height)+1 by (2*width)+1 to include edges.*/
@@ -176,6 +185,19 @@ let myGame = (function(){
       }
     }
 
+    solArray.splice(0,solArray.length);
+
+    for(var i=0; i<mazeSize; i++){
+      solArray.push(new Array(mazeSize));
+    }
+
+    //also intitializes the solArray
+    for(var i=0; i<mazeSize; i++){
+      for(var j=0; j<mazeSize; j++){
+        solArray[i][j] = -1;
+      }
+    }
+
     //set starting space to cell
     mazeArray[startX][startY] = 1;
     //add walls of starting space to wall list
@@ -187,34 +209,35 @@ let myGame = (function(){
       var randIndex = Math.floor(Math.random()*wallArray.length);
       tempX = wallArray[randIndex].x;
       tempY = wallArray[randIndex].y;
-      //console.log('Considering wallArray index', randIndex, ' x:', tempX, ' y:', tempY);
 
       //horizontal
       if(tempX%2 == 0){
-        //console.log('Wall is Horizontal');
         if(mazeArray[tempX][tempY+1] == 0){
           mazeArray[tempX][tempY] = 1;
           mazeArray[tempX][tempY+1] = 1;
           addWall(tempX,tempY+1);
+          solArray[tempX/2][(tempY+1)/2] = 0;
         }
         else if (mazeArray[tempX][tempY-1] == 0){
           mazeArray[tempX][tempY] = 1;
           mazeArray[tempX][tempY-1] = 1;
           addWall(tempX,tempY-1);
+          solArray[tempX/2][(tempY-1)/2] = 2;
         }
       }
       //vertical
       else {
-        //console.log('Wall is Vertical');
         if(mazeArray[tempX+1][tempY] == 0 ){
           mazeArray[tempX][tempY] = 1;
           mazeArray[tempX+1][tempY] = 1;
           addWall(tempX+1,tempY);
+          solArray[(tempX+1)/2][tempY/2] = 3;
         }
         else if(mazeArray[tempX-1][tempY] == 0){
           mazeArray[tempX][tempY] = 1;
           mazeArray[tempX-1][tempY] = 1;
           addWall(tempX-1,tempY);
+          solArray[(tempX-1)/2][tempY/2] = 1;
         }
       }
       //console.log('Splicing ', randIndex);
@@ -222,6 +245,7 @@ let myGame = (function(){
     }
   }
 
+  //Given a cell, adds any appropriate walls to wallArray - Used for generation
   function addWall(xIn,yIn){
     //console.log('adding walls around ', xIn, ' ', yIn);
     if(xIn+1 < wide-1){
@@ -263,6 +287,7 @@ let myGame = (function(){
     //console.log('wallArray length is now' , wallArray.length);
   }
 
+  //Prints maze to terminal - for debugging only
   function printMaze(){
     var stringOut = '';
     for (var i=0; i<wide+2; i++){
@@ -293,18 +318,66 @@ let myGame = (function(){
     console.log(stringOut);
   }
 
-  that.newMaze = function(size){
-    let canvas = document.getElementById('canvas-main');
+  //Print solution map to terminal - for debugging only
+  function printSol(){
+    var printStrin = '';
+    for(var i=0; i<mazeSize; i++){
+      for(var j=0; j<mazeSize; j++){
+        if(solArray[j][i] == -1){
+          printStrin += 'o';
+        }
+        if(solArray[j][i] == 0){
+          printStrin += '^';
+        }
+        if(solArray[j][i] == 1){
+          printStrin += '>';
+        }
+        if(solArray[j][i] == 2){
+          printStrin += 'v';
+        }
+        if(solArray[j][i] == 3){
+          printStrin += '<';
+        }
+      }
+      printStrin += '\n';
+    }
+    console.log(printStrin);
+  }
 
+  //Called whenever a button is pressed to make a new maze - takes maze size in cells
+  that.newMaze = function(size){
+    //Gets canvas object
+    let canvas = document.getElementById('canvas-main');
+    //Resizes canvas object
     canvas.width = ((size*16) + ((size+1)*3));
     canvas.height = ((size*16) + ((size+1)*3));
 
+    //Sets array sizes correctly
     high = (size*2)-1;
     wide = high;
+
+    //Sets mazeSize correctly
     mazeSize = size;
 
+    //startX = mazeSize-1;
+    //startY = mazeSize-1;
+
+    //sets player Position
+    playX = 0;
+    playY = 0;
+
+    //resets solved
+    solved = false;
+
+    score = 0;
+
+    startX = wide-1;
+    startY = high-1;
+
+    //generates a new maze
     generateMaze();
-    //printMaze();
+
+    printSol();
   }
 
   function drawMaze(size){
@@ -358,34 +431,86 @@ let myGame = (function(){
     }
 
     startTile.draw(3,3);
-    endTile.draw((16*size),(16*size));
+    endTile.draw(((size-1)*19)+4,((size-1)*19)+4);
   }
 
   function update(){
-    //myTexture.update();
+    processInput();
+  }
+
+  function processInput() {
+  	for (input in inputQueue) {
+      moveCharacter(inputQueue[input]);
+  		//console.log(inputQueue[input]);
+  	}
+  	inputQueue = {};
+  }
+
+  function moveCharacter(input){
+    if(!solved){
+      //up
+      if(input == 38){
+        if(playY > 0){
+          if(mazeArray[playX*2][(playY*2)-1] == 1){
+            playY--;
+          }
+        }
+      }
+      //down
+      if(input == 40){
+        if(playY < mazeSize-1){
+          if(mazeArray[playX*2][(playY*2)+1] == 1){
+            playY++;
+          }
+        }
+      }
+      //right
+      if(input == 39){
+        if(playX < mazeSize-1){
+          if(mazeArray[(playX*2)+1][playY*2] == 1){
+            playX++;
+          }
+        }
+      }
+      //left
+      if(input == 37){
+        if(playX > 0){
+          if(mazeArray[(playX*2)-1][playY*2] == 1){
+            playX--;
+          }
+        }
+      }
+      if(playX == mazeSize-1 && playY == mazeSize-1){
+        solved = true;
+      }
+    }
   }
 
   function render(){
     Graphics.beginRender();
+    document.getElementById('id-score').innerHTML = score;
     drawMaze(mazeSize);
+    drawPlayer();
   }
 
-  function gameLoop(time){
-    elapsedTime = time - previousTime;
-    previousTime = time;
-
+  function gameLoop(){
     update();
     render();
 
-    lastTimeStamp = time;
     requestAnimationFrame(gameLoop);
+  }
+
+  function drawPlayer(){
+    playerOrb.draw((19*playX)+3,(19*playY)+3);
   }
 
   that.initialize = function(){
     Graphics.initialize();
-
     generateMaze();
-    printMaze();
+
+    window.addEventListener('keydown', function(event) {
+  		inputQueue[event.keyCode] = event.keyCode;
+  	});
 
     gameLoop();
   }
