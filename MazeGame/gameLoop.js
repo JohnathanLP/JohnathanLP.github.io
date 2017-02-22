@@ -477,7 +477,11 @@ let myGame = (function(){
       if(inputQueue[input] == 89){
         myGame.toggleScore();
       }
+      if(inputQueue[input] == 13 && solved){
+        that.newMaze(mazeSize);
+      }
       moveCharacter(inputQueue[input]);
+      //console.log(inputQueue[input]);
   	}
   	inputQueue = {};
   }
