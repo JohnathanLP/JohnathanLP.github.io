@@ -57,19 +57,21 @@ let Graphics = (function(){
 }());
 
 let myGame = (function(){
-  let that = {};
+  let that = [];
   //Size of maze in terms of cells
   let mazeSize = 5;
 
   let playX = 0;
   let playY = 0;
 
-  let inputQueue = {};
+  let inputQueue = [];
+
+  let hsArray = [];
 
   let floorCell = Graphics.Texture({
     imageSource: 'maze_texture.png',
     center: {x:8, y:8},
-    clip: {x:8, y:0, w:16, h:16},
+    clip: {x:0, y:0, w:16, h:16},
     width: 16,
     height: 16,
     rotation: 0
@@ -77,80 +79,62 @@ let myGame = (function(){
 
   let startTile = Graphics.Texture({
     imageSource: 'maze_texture.png',
-    center: {x:8, y:8},
-    clip: {x:42, y:16, w:16, h:16},
-    width: 16,
-    height: 16,
+    center: {x:4, y:4},
+    clip: {x:22, y:9, w:8, h:8},
+    width: 8,
+    height: 8,
     rotation: 0
   })
 
   let endTile = Graphics.Texture({
     imageSource: 'maze_texture.png',
-    center: {x:8, y:8},
-    clip: {x:26, y:17, w:16, h:16},
-    width: 16,
-    height: 16,
+    center: {x:4, y:4},
+    clip: {x:22, y:0, w:8, h:8},
+    width: 8,
+    height: 8,
     rotation: 0
   })
 
   let wallCorner = Graphics.Texture({
     imageSource: 'maze_texture.png',
-    center: {x:1, y:1},
-    clip: {x:25, y:8, w:3, h:3},
-    width: 3,
-    height: 3,
+    center: {x:2, y:2},
+    clip: {x:17, y:17, w:4, h:4},
+    width: 4,
+    height: 4,
     rotation: 0
   })
 
   let wallVert = Graphics.Texture({
     imageSource: 'maze_texture.png',
-    center: {x:1, y:8},
-    clip: {x:0, y:0, w:3, h:16},
-    width: 3,
-    height: 16,
-    rotation: 0
-  })
-
-  let passVert = Graphics.Texture({
-    imageSource: 'maze_texture.png',
-    center: {x:1, y:8},
-    clip: {x:4, y:0, w:3, h:16},
-    width: 3,
+    center: {x:2, y:8},
+    clip: {x:17, y:0, w:4, h:16},
+    width: 4,
     height: 16,
     rotation: 0
   })
 
   let wallHori = Graphics.Texture({
     imageSource: 'maze_texture.png',
-    center: {x:8, y:1},
-    clip: {x:25, y:0, w:16, h:3},
-    width: 3,
-    height: 3,
-    rotation: 0
-  })
-
-  let passHori = Graphics.Texture({
-    imageSource: 'maze_texture.png',
-    center: {x:8, y:1},
-    clip: {x:25, y:4, w:16, h:3},
-    width: 3,
-    height: 3,
+    center: {x:8, y:2},
+    clip: {x:0, y:17, w:16, h:4},
+    width: 16,
+    height: 4,
     rotation: 0
   })
 
   let playerOrb = Graphics.Texture({
     imageSource: 'maze_texture.png',
-    center: {x:8, y:8},
-    clip: {x:8, y:16, w:16, h:16},
-    width: 16,
-    height: 16,
+    center: {x:4, y:4},
+    clip: {x:20, y:21, w:10, h:10},
+    width: 8,
+    height: 8,
     rotation: 0
   })
 
   let solDot = Graphics.Texture({
     imageSource: 'maze_texture.png',
     center: {x:2, y:2},
-    clip: {x:25, y:12, w:4, h:4},
+    clip: {x:0, y:22, w:4, h:4},
     width: 4,
     height: 4,
     rotation: 0
@@ -159,7 +143,7 @@ let myGame = (function(){
   let crumbDot = Graphics.Texture({
     imageSource: 'maze_texture.png',
     center: {x:2, y:2},
-    clip: {x:30, y:12, w:4, h:4},
+    clip: {x:5, y:22, w:4, h:4},
     width: 4,
     height: 4,
     rotation: 0
@@ -168,7 +152,7 @@ let myGame = (function(){
   let hintDot = Graphics.Texture({
     imageSource: 'maze_texture.png',
     center: {x:2, y:2},
-    clip: {x:35, y:12, w:4, h:4},
+    clip: {x:10, y:22, w:4, h:4},
     width: 4,
     height: 4,
     rotation: 0
@@ -326,70 +310,13 @@ let myGame = (function(){
     //console.log('wallArray length is now' , wallArray.length);
   }
 
-  //Prints maze to terminal - for debugging only
-  function printMaze(){
-    var stringOut = '';
-    for (var i=0; i<wide+2; i++){
-      stringOut += '+';
-      stringOut += ' ';
-    }
-    stringOut += '\n';
-    for (var i=0; i<high; i++){
-      stringOut += '+ ';
-      for (var j=0; j<wide; j++){
-        if(mazeArray[j][i] == 0){
-          stringOut += '+';
-        }
-        else {
-          stringOut += ' ';
-        }
-        //stringOut += (mazeArray[j][i]);
-        stringOut += (' ');
-      }
-      stringOut += '+';
-      stringOut += '\n';
-    }
-    for (var i=0; i<wide+2; i++){
-      stringOut += '+';
-      stringOut += ' ';
-    }
-    stringOut += '\n';
-    console.log(stringOut);
-  }
-
-  //Print solution map to terminal - for debugging only
-  function printSol(){
-    var printStrin = '';
-    for(var i=0; i<mazeSize; i++){
-      for(var j=0; j<mazeSize; j++){
-        if(solArray[j][i] == -1){
-          printStrin += 'o';
-        }
-        if(solArray[j][i] == 0){
-          printStrin += '^';
-        }
-        if(solArray[j][i] == 1){
-          printStrin += '>';
-        }
-        if(solArray[j][i] == 2){
-          printStrin += 'v';
-        }
-        if(solArray[j][i] == 3){
-          printStrin += '<';
-        }
-      }
-      printStrin += '\n';
-    }
-    console.log(printStrin);
-  }
-
   //Called whenever a button is pressed to make a new maze - takes maze size in cells
   that.newMaze = function(size){
     //Gets canvas object
     let canvas = document.getElementById('canvas-main');
     //Resizes canvas object
-    canvas.width = ((size*16) + ((size+1)*3));
-    canvas.height = ((size*16) + ((size+1)*3));
+    canvas.width = size*16;
+    canvas.height = size*16;
 
     //Sets array sizes correctly
     high = (size*2)-1;
@@ -397,9 +324,6 @@ let myGame = (function(){
 
     //Sets mazeSize correctly
     mazeSize = size;
-
-    //startX = mazeSize-1;
-    //startY = mazeSize-1;
 
     //sets player Position
     playX = 0;
@@ -413,10 +337,12 @@ let myGame = (function(){
     startX = wide-1;
     startY = high-1;
 
+    showHint = false;
+    showCrumb = false;
+    showSol = false;
+
     //generates a new maze
     generateMaze();
-
-    //printSol();
   }
 
   that.toggleScore = function(){
@@ -453,7 +379,7 @@ let myGame = (function(){
         solX--;
       }
 
-      solDot.draw(9+(19*solX),9+(19*solY));
+      solDot.draw((solX*16)+6,(solY*16)+6);
     }
   }
 
@@ -461,7 +387,7 @@ let myGame = (function(){
     for(var i=0; i<mazeSize; i++){
       for(var j=0; j<mazeSize; j++){
         if(crumbArray[i][j] == 1){
-          crumbDot.draw(9+(19*i),9+(19*j));
+          crumbDot.draw((i*16)+6,(j*16)+6);
         }
       }
     }
@@ -469,71 +395,63 @@ let myGame = (function(){
 
   function drawHint(){
     if(solArray[playX][playY] == 0){
-      hintDot.draw(9+(19*playX),9+(19*(playY-1)));
+      hintDot.draw(((playX)*16)+6,((playY-1)*16)+6);
     }
     else if(solArray[playX][playY] == 1){
-      hintDot.draw(9+(19*(playX+1)),9+(19*playY));
+      hintDot.draw(((playX+1)*16)+6,((playY)*16)+6);
     }
     else if(solArray[playX][playY] == 2){
-      hintDot.draw(9+(19*playX),9+(19*(playY+1)));
+      hintDot.draw(((playX)*16)+6,((playY+1)*16)+6);
     }
     else if(solArray[playX][playY] == 3){
-      hintDot.draw(9+(19*(playX-1)),9+(19*playY));
+      hintDot.draw(((playX-1)*16)+6,((playY+-1)*16)+6);
     }
   }
 
-  function drawMaze(size){
-    //fills in corners
-    for(var i=0; i<(size+1); i++){
-      for(var j=0; j<(size+1); j++){
-        wallCorner.draw(i*19,j*19);
+  function drawMaze(){
+    //draw floor
+    for(var i=0; i<mazeSize; i++){
+      for(var j=0; j<mazeSize; j++){
+        floorCell.draw(i*16, j*16);
       }
-    }
-    //fills in cells
-    for(var i=0; i<size; i++){
-      for(var j=0; j<size; j++){
-        floorCell.draw((i*19)+3,(j*19)+3);
-      }
-    }
-    //fills in vertical walls
-    for(var i=0; i<size;i++){
-      wallVert.draw(0,(i*19)+3);
-      wallVert.draw(size*19,(i*19)+3);
-    }
-    //fills in horizontal walls
-    for(var i=0; i<size;i++){
-      wallHori.draw((i*19)+3,0);
-      wallHori.draw((i*19)+3,size*19);
     }
 
-    //add interior walls and passages
-    for(var i=0; i<wide; i++){
-      for(var j=0; j<high; j++){
-        //vertical
-        if(j%2 == 0){
-          if(i%2 == 1){
-            if(mazeArray[i][j] == 0){
-              wallVert.draw(((i/2)*19)+9,((j/2)*19)+3);
-            } else {
-              passVert.draw(((i/2)*19)+9,((j/2)*19)+3);
-            }
-          }
+    //draw interior walls
+    for(var i=0; i<mazeSize; i++){
+      for(var j=0; j<mazeSize-1; j++){
+        if(mazeArray[i*2][(j*2)+1] == 0){
+          wallHori.draw(i*16, ((j+1)*16)-2);
         }
-        //horizontal
-        if(j%2 == 1){
-          if(i%2 == 0){
-            if(mazeArray[i][j] == 0){
-              wallHori.draw(((i/2)*19)+3,((j/2)*19)+9);
-            } else {
-              passHori.draw(((i/2)*19)+3,((j/2)*19)+9);
-            }
-          }
+      }
+    }
+    for(var i=0; i<mazeSize-1; i++){
+      for(var j=0; j<mazeSize; j++){
+        if(mazeArray[(i*2)+1][j*2] == 0){
+          wallVert.draw(((i+1)*16)-2, j*16);
         }
       }
     }
 
-    startTile.draw(3,3);
-    endTile.draw(((size-1)*19)+4,((size-1)*19)+4);
+    //draw exterior walls
+    for(var i=0; i<mazeSize; i++){
+      wallHori.draw(i*16, -2);
+      wallHori.draw(i*16, (mazeSize*16)-2);
+    }
+    for(var i=0; i<mazeSize; i++){
+      wallVert.draw(-2, i*16);
+      wallVert.draw((mazeSize*16)-2,i*16);
+    }
+
+    //draw corners
+    for(var i=0; i<=mazeSize; i++){
+      for(var j=0; j<=mazeSize; j++){
+        wallCorner.draw((i*16)-2,(j*16)-2);
+      }
+    }
+
+    //draw start and finish
+    startTile.draw(4,4);
+    endTile.draw((mazeSize*16)-12,(mazeSize*16)-12);
   }
 
   function update(){
@@ -551,8 +469,10 @@ let myGame = (function(){
       if(inputQueue[input] == 66){
         showCrumb = !showCrumb;
       }
+      if(inputQueue[input] == 89){
+        myGame.toggleScore();
+      }
       moveCharacter(inputQueue[input]);
-  		console.log(inputQueue[input]);
   	}
   	inputQueue = {};
   }
@@ -562,6 +482,14 @@ let myGame = (function(){
       //up
       if(input == 38 || input == 87 || input == 73){
         if(playY > 0){
+          if(crumbArray[playX][playY-1] != 1){
+            if(solArray[playX][playY] == 0){
+              score += 5;
+            }
+            else{
+              score -= 2;
+            }
+          }
           if(mazeArray[playX*2][(playY*2)-1] == 1){
             playY--;
           }
@@ -570,6 +498,14 @@ let myGame = (function(){
       //down
       if(input == 40 || input == 75 || input == 83){
         if(playY < mazeSize-1){
+          if(crumbArray[playX][playY+1] != 1){
+            if(solArray[playX][playY] == 2){
+              score += 5;
+            }
+            else{
+              score -= 2;
+            }
+          }
           if(mazeArray[playX*2][(playY*2)+1] == 1){
             playY++;
           }
@@ -578,6 +514,14 @@ let myGame = (function(){
       //right
       if(input == 39 || input == 76 || input == 68){
         if(playX < mazeSize-1){
+          if(crumbArray[playX+1][playY] != 1){
+            if(solArray[playX][playY] == 1){
+              score += 5;
+            }
+            else{
+              score -= 2;
+            }
+          }
           if(mazeArray[(playX*2)+1][playY*2] == 1){
             playX++;
           }
@@ -586,6 +530,14 @@ let myGame = (function(){
       //left
       if(input == 37 || input == 65 || input == 74){
         if(playX > 0){
+          if(crumbArray[playX-1][playY] != 1){
+            if(solArray[playX][playY] == 3){
+              score += 5;
+            }
+            else{
+              score -= 2;
+            }
+          }
           if(mazeArray[(playX*2)-1][playY*2] == 1){
             playX--;
           }
@@ -593,6 +545,26 @@ let myGame = (function(){
       }
       if(playX == mazeSize-1 && playY == mazeSize-1){
         solved = true;
+        if(score > hsArray[0].score){
+          hsArray.splice(0,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(5,1);
+        }
+        else if(score > hsArray[1].score){
+          hsArray.splice(1,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(5,1);
+        }
+        else if(score > hsArray[2].score){
+          hsArray.splice(2,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(5,1);
+        }
+        else if(score > hsArray[3].score){
+          hsArray.splice(3,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(5,1);
+        }
+        else if(score > hsArray[4].score){
+          hsArray.splice(4,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(5,1);
+        }
       }
       crumbArray[playX][playY] = 1;
     }
@@ -601,15 +573,33 @@ let myGame = (function(){
   function render(){
     Graphics.beginRender();
     document.getElementById('id-score').innerHTML = score;
-    drawMaze(mazeSize);
+    document.getElementById('id-time').innerHTML = Math.floor((performance.now()/1000));
+
+    if(hsArray[0].score != 0){
+      document.getElementById('id-hs1').innerHTML = (hsArray[0].score+' points, '+hsArray[0].time+' seconds, size '+hsArray[0].size);
+    }
+    if(hsArray[1].score != 0){
+      document.getElementById('id-hs2').innerHTML = (hsArray[1].score+' points, '+hsArray[1].time+' seconds, size '+hsArray[1].size);
+    }
+    if(hsArray[2].score != 0){
+      document.getElementById('id-hs3').innerHTML = (hsArray[2].score+' points, '+hsArray[2].time+' seconds, size '+hsArray[2].size);
+    }
+    if(hsArray[3].score != 0){
+      document.getElementById('id-hs4').innerHTML = (hsArray[3].score+' points, '+hsArray[3].time+' seconds, size '+hsArray[3].size);
+    }
+    if(hsArray[4].score != 0){
+      document.getElementById('id-hs5').innerHTML = (hsArray[4].score+' points, '+hsArray[4].time+' seconds, size '+hsArray[4].size);
+    }
+
+    drawMaze();
+    if(showCrumb){
+      drawCrumbs();
+    }
     if(showSol){
       drawSol();
     }
     if(showHint){
       drawHint();
-    }
-    if(showCrumb){
-      drawCrumbs();
     }
     drawPlayer();
   }
@@ -622,12 +612,20 @@ let myGame = (function(){
   }
 
   function drawPlayer(){
-    playerOrb.draw((19*playX)+3,(19*playY)+3);
+    playerOrb.draw((16*playX)+3,(16*playY)+3);
   }
 
   that.initialize = function(){
     Graphics.initialize();
     generateMaze();
+
+    for(var i=0; i<5; i++){
+      hsArray.push({
+        score: 0,
+        time: 0,
+        size: 0
+      });
+    }
 
     window.addEventListener('keydown', function(event) {
   		inputQueue[event.keyCode] = event.keyCode;

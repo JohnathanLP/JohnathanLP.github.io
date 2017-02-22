@@ -9,20 +9,29 @@
 <body onload="myGame.initialize()">
   <table align=center>
     <tr>
-      <td id=id-header colspan="3"> ESCAPE THE MAZE </td>
+      <td id=id-header colspan="3"> ESCAPE! </td>
     </tr>
     <tr>
       <td id=id-left>
         Controls: </br>
-        Use <b> WASD, IJKL or Arrow Keys </b> move character </br> </br>
+        Use <b> WASD, IJKL or Arrow Keys </b> move character </br>
         <b>B</b> <i> toggle breadcrumbs; shows where you have been </i> </br>
         <b>H</b> <i> toggle a hint; shows the next move you should make </i> </br>
         <b>P</b> <i> toggle the solution; shows the path to the finish </i> </br>
+        </br>
+        Scoring:</br>
+        5 points for a correct move </br>
+        -2 points for an incorrect move </br>
+        (the first time the space is visited) </br>
+        <p2> <i> Game and art by Johnathan Powell </i></p2>
         </br></br>
+        <p1> Elapsed Time:</p1> <p1 id=id-time>  </p1></br>
+        <button id=id-scoretoggle onclick='myGame.toggleScore()'> Toggle Score (Y) </button></br>
+        <p1 id=id-scorelabel> Your Score:</p1> <p1 id=id-score>  </p1></br>
 
       </td>
       <td id=id-maze>
-        <canvas id = "canvas-main" width = "98" height = "98"></canvas>
+        <canvas id = "canvas-main" width = "80" height = "80"></canvas>
       </td>
       <td id=id-right>
         New Maze: </br>
@@ -31,8 +40,14 @@
         <button id=id-sizebuttons onclick="myGame.newMaze(15)"> 15x15 </button> </br>
         <button id=id-sizebuttons onclick="myGame.newMaze(20)"> 20x20 </button> </br>
         </br></br>
-        <button id=id-scoretoggle onclick='myGame.toggleScore()'> Toggle Score </button></br>
-        <p1 id=id-scorelabel>Score:</p1> <p1 id=id-score>  </p1></br>
+        <div id=id-highscores>
+        Your High Scores: </br>
+        1. <p1 id=id-hs1> </p1> </br>
+        2. <p1 id=id-hs2> </p1> </br>
+        3. <p1 id=id-hs3> </p1> </br>
+        4. <p1 id=id-hs4> </p1> </br>
+        5. <p1 id=id-hs5> </p1> </br>
+      </div>
       </td>
     </tr>
   </table>
