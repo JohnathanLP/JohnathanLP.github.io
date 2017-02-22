@@ -64,6 +64,8 @@ let myGame = (function(){
   let playX = 0;
   let playY = 0;
 
+  let time = 0;
+
   let inputQueue = [];
 
   let hsArray = [];
@@ -334,6 +336,9 @@ let myGame = (function(){
 
     score = 0;
 
+    time = Math.floor(performance.now()/1000);
+    console.log(time);
+
     startX = wide-1;
     startY = high-1;
 
@@ -546,19 +551,19 @@ let myGame = (function(){
       if(playX == mazeSize-1 && playY == mazeSize-1){
         solved = true;
         if(score > hsArray[0].score){
-          hsArray.splice(0,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(0,0,{score:score,time:Math.floor(performance.now()/1000)-time,size:mazeSize})
           hsArray.splice(5,1);
         }
         else if(score > hsArray[1].score){
-          hsArray.splice(1,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(1,0,{score:score,time:Math.floor(performance.now()/1000)-time,size:mazeSize})
           hsArray.splice(5,1);
         }
         else if(score > hsArray[2].score){
-          hsArray.splice(2,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(2,0,{score:score,time:Math.floor(performance.now()/1000)-time,size:mazeSize})
           hsArray.splice(5,1);
         }
         else if(score > hsArray[3].score){
-          hsArray.splice(3,0,{score:score,time:Math.floor(performance.now()/1000),size:mazeSize})
+          hsArray.splice(3,0,{score:score,time:Math.floor(performance.now()/1000)-time,size:mazeSize})
           hsArray.splice(5,1);
         }
         else if(score > hsArray[4].score){
@@ -573,7 +578,7 @@ let myGame = (function(){
   function render(){
     Graphics.beginRender();
     document.getElementById('id-score').innerHTML = score;
-    document.getElementById('id-time').innerHTML = Math.floor((performance.now()/1000));
+    document.getElementById('id-time').innerHTML = Math.floor((performance.now()/1000))-time;
 
     if(hsArray[0].score != 0){
       document.getElementById('id-hs1').innerHTML = (hsArray[0].score+' points, '+hsArray[0].time+' seconds, size '+hsArray[0].size);
