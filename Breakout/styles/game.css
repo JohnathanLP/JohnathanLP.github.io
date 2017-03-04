@@ -1,0 +1,41 @@
+#id-game{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 800px;
+	height: 600px;
+	background-color: rgb(50,50,50);
+	font-size: 40px;
+}
+
+#id-game .screen {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display: none;
+	z-index: 10;
+}
+
+#id-game .screen.active {
+	display: block;
+}
+
+#id-menu{
+  text-align: center;
+}
+
+#id-gameplay{
+	width: 100%;
+	height:100%;
+}
+
+ul{
+	line-height: 3;
+	list-style: none;
+}
+
+canvas{
+	height: 100%;
+	width: 100%;
+	image-rendering: pixelated;
+}

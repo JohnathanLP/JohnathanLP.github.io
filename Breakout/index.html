@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html lang = "en-US">
+<head>
+	<meta charset = "UTF-8">
+	<title>Breakout</title>
+
+	<link rel = "stylesheet" type = "text/css" href = "styles/game.css">
+</head>
+<body onload="myGame.game.initialize()">
+  <div id="id-game">
+    <div id="id-menu" class="screen">
+      <ul>
+        <li><button id="id-button-newgame"> New Game </button></li>
+        <li><button id="id-button-highscores"> High Scores </button></li>
+        <li><button id="id-button-credits"> Credits </button></li>
+      </ul>
+    </div>
+    <div id='id-gameplay' class="screen">
+      <canvas id='id-canvasmain' width="448" height="336">
+			<button> Test </button>
+    </div>
+  </div>
+
+  <script src = "scripts/game.js"></script>
+	<script src = "scripts/graphics.js"></script>
+  <script src = "scripts/mainmenu.js"></script>
+  <script src = "scripts/gameplay.js"></script>
+	<script src = "scripts/random.js"></script>
+</body>
+</html>
