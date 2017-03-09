@@ -91,10 +91,19 @@
 
   function checkCollisions(){
     //paddle
-    if(ballPos.y > 292){
-      if(Math.abs(paddPos-ballPos.x) < 32){
+    if(ballPos.y > 292 && ballPos.y < 300){
+      var diff = paddPos-ballPos.x;
+      if(Math.abs(diff) < 38){
         //TODO special angles on bounce
-        ballVel.y *= -1
+        ballVel.y *= -1;
+        ballVel.x += (diff/-10)-2;
+        if(ballVel.x > 10){
+          ballVel.x = 10;
+        }
+        if(ballVel.x < -10){
+          ballVel.x = -10;
+        }
+        console.log(ballVel.x);
       }
     }
     if(ballPos.y>130 || ballPos.y<40){
@@ -178,6 +187,7 @@
           direction:Random.nextCircleVector(),
           speed:Random.nextGaussian(5,3),
           rotation:0,
+          stroke: 'rgba(255,'+Math.floor(Random.nextGaussian(150,100))+', 0, 1)',
           lifetime:Random.nextGaussian(0,1)
       };
       particles.push(Graphics.Particle(p));

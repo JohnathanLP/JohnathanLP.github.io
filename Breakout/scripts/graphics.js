@@ -48,7 +48,6 @@ let Graphics = (function(){
 		spec.width = 1;
 		spec.height = 1;
 		spec.fill = 'rgba(255, 255, 255, 1)';
-		spec.stroke = 'rgba(255, 0, 0, 1)';
 		spec.alive = 0;
 
 		that.update = function(elapsedTime) {
