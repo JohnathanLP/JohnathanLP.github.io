@@ -13,6 +13,8 @@
   var ballVel = {x:1, y:3};
   var paddPos = 224;
 
+  var lives = 3;
+
   let yellowBrick = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
     center: {x:0, y:0},
@@ -67,6 +69,17 @@
     rotation: 0
   })
 
+  let life = Graphics.Texture({
+    imageSource: 'images/breakouttextures.png',
+    center: {x:32, y:0},
+    clip: {x:0, y:56, w:64, h:8},
+    width: 64,
+    height: 8,
+    rotation: 0
+  })
+
+
+
   function drawBricks(){
     for(var i=0; i<14; i++)
     {
@@ -91,95 +104,128 @@
     }
   }
 
+  function drawLives(){
+    for(var i=0; i<lives; i++){
+      paddle.draw(400-(70*i),20);
+    }
+  }
 
-  //TODO - THIS IS MASSIVELY BROKEN, BLOATED AND EXCESSIVE! DELETE AND RE-WRITE
   function checkCollisions(){
     //paddle
-    if(ballPos.y > 292 && ballPos.y < 300){
-      var diff = paddPos-ballPos.x;
-      if(Math.abs(diff) < 38){
+    if(ballPos.y > 292 && ballPos.y < 320 && ballVel.y > 0){
+      var diff = ballPos.x - paddPos;
+      if(diff <= 36 && diff >= -36){
         ballVel.y *= -1;
-        ballVel.x += (diff/-10)-2;
+        ballVel.x += (diff/10);
+        //limit horizontal speed to 7
         if(ballVel.x > 7){
           ballVel.x = 7;
         }
         if(ballVel.x < -7){
           ballVel.x = -7;
         }
-        console.log(ballVel.x);
       }
     }
-    if(ballPos.y>130 || ballPos.y<40){
-      return true;
+
+    function breakBrick(xIn,yIn){
+      //TODO - breaking brick particles
+      if(yIn > 0){
+        if(yIn < 9){
+          var strokeString = 'rgba(250, 250, 0, 1)'
+        }
+        if(yIn < 7){
+          var strokeString = 'rgba(250, 100, 0, 1)'
+        }
+        if(yIn < 5){
+          var strokeString = 'rgba(0, 0, 250, 1)'
+        }
+        if(yIn < 3){
+          var strokeString = 'rgba(0, 250, 0, 1)'
+        }
+      }
+      for(particle=0; particle<50; particle++){
+        p={
+            position:{x:(xIn*32)+16+Random.nextGaussian(0,8), y:(yIn*8)+49+Random.nextGaussian(0,2)},
+            direction:Random.nextCircleVector(),
+            //direction:{x:0, y:1},
+            //direction:{x:ballVel.x, y:ballVel.y+Random.nextGaussian(3,2)},
+            speed:Random.nextGaussian(15,4),
+            rotation:0,
+            stroke: strokeString,
+            lifetime:Random.nextGaussian(1,.5)
+        };
+        particles.push(Graphics.Particle(p));
+      }
+      brickArray[xIn][yIn]=0;
     }
-    //bricks above
-    var ballCell={x:Math.floor(ballPos.x/32), y:Math.floor((ballPos.y-40)/9)};
-    //console.log('ball cell: ', ballCell.x, ' ', ballCell.y);
-    if(ballCell.y>0){
-      if(brickArray[ballCell.x][ballCell.y-1] == 1){
+
+    //bricks
+    var xFlag = false;
+    var yFlag = false;
+    if(ballPos.y<=130 && ballPos.y>=40){
+      var ballCell={x:Math.floor(ballPos.x/32), y:Math.floor((ballPos.y-40)/9)};
+      console.log('x: ', ballCell.x, 'y: ', ballCell.y);
+      //bricks above
+      if(ballCell.y>0){
+        if(brickArray[ballCell.x][ballCell.y-1] == 1){
+          yFlag = true;
+          breakBrick(ballCell.x, ballCell.y-1);
+        }
+      }
+      //bricks below
+      if(ballCell.y<11){
+        if(brickArray[ballCell.x][ballCell.y+1] == 1){
+          yFlag = true;
+          breakBrick(ballCell.x, ballCell.y+1);
+        }
+      }
+      //bricks to right
+      if(ballPos.x % 32 > 24){
+        if(ballCell.x<13){
+          if(brickArray[ballCell.x+1][ballCell.y] == 1){
+            xFlag = true;
+            breakBrick(ballCell.x+1, ballCell.y);
+          }
+          //down and to the right
+          // if(brickArray[ballCell.x+1][ballCell.y+1] == 1){
+          //   xFlag = true;
+          //   yFlag = true;
+          //   breakBrick(ballCell.x+1, ballCell.y+1);
+          // }
+          // //up and to the right
+          // if(brickArray[ballCell.x+1][ballCell.y-1] == 1){
+          //   xFlag = true;
+          //   yFlag = true;
+          //   breakBrick(ballCell.x+1, ballCell.y-1);
+          // }
+        }
+      }
+      //bricks to left
+      if(ballPos.x % 32 < 8){
+        if(ballCell.x>0){
+          if(brickArray[ballCell.x-1][ballCell.y] == 1){
+            xFlag = true;
+            breakBrick(ballCell.x-1, ballCell.y);
+          }
+          //down and to the left
+          // if(brickArray[ballCell.x-1][ballCell.y+1] == 1){
+          //   xFlag = true;
+          //   yFlag = true;
+          //   breakBrick(ballCell.x-1, ballCell.y+1);
+          // }
+          // //up and to the left
+          // if(brickArray[ballCell.x-1][ballCell.y-1] == 1){
+          //   xFlag = true;
+          //   yFlag = true;
+          //   breakBrick(ballCell.x-1, ballCell.y-1);
+          // }
+        }
+      }
+      if(xFlag){
+        ballVel.x *= -1;
+      }
+      if(yFlag){
         ballVel.y *= -1;
-        brickArray[ballCell.x][ballCell.y-1]=0;
-      }
-    }
-    //bricks below
-    if(ballCell.y<11){
-      if(brickArray[ballCell.x][ballCell.y+1] == 1){
-        ballVel.y *= -1;
-        brickArray[ballCell.x][ballCell.y+1]=0;
-      }
-    }
-    //bricks to left (including diagonal)
-    if(ballPos.x % 32 < 8){
-      if(ballCell.x>0){
-        if(brickArray[ballCell.x-1][ballCell.y] == 1){
-          ballVel.x *= -1;
-          brickArray[ballCell.x-1][ballCell.y]=0;
-        }
-        else if(brickArray[ballCell.x][ballCell.y+1] == 0){
-          if(ballCell.y < 11){
-            if(brickArray[ballCell.x-1][ballCell.y+1] == 1){
-              ballVel.x *= -1;
-              ballVel.y *= -1;
-              brickArray[ballCell.x-1][ballCell.y+1]=0;
-            }
-          }
-        }
-        else if(brickArray[ballCell.x][ballCell.y-1] == 0){
-          if(ballCell.y > 0){
-            if(brickArray[ballCell.x-1][ballCell.y-1] == 1){
-              ballVel.x *= -1;
-              ballVel.y *= -1;
-              brickArray[ballCell.x-1][ballCell.y-1]=0;
-            }
-          }
-        }
-      }
-    }
-    //bricks to right (including diagonal)
-    if(ballPos.x % 32 > 24){
-      if(ballCell.x<13){
-        if(brickArray[ballCell.x+1][ballCell.y] == 1){
-          ballVel.x *= -1;
-          brickArray[ballCell.x+1][ballCell.y]=0;
-        }
-        else if(brickArray[ballCell.x][ballCell.y+1] == 0){
-          if(ballCell.y < 11){
-            if(brickArray[ballCell.x+1][ballCell.y+1] == 1){
-              ballVel.x *= -1;
-              ballVel.y *= -1;
-              brickArray[ballCell.x+1][ballCell.y+1]=0;
-            }
-          }
-        }
-        else if(brickArray[ballCell.x][ballCell.y-1] == 0){
-          if(ballCell.y > 0){
-            if(brickArray[ballCell.x+1][ballCell.y-1] == 1){
-              ballVel.x *= -1;
-              ballVel.y *= -1;
-              brickArray[ballCell.x+1][ballCell.y-1]=0;
-            }
-          }
-        }
       }
     }
   }
@@ -203,7 +249,9 @@
       ballVel.x *= -1;
     }
     if(ballPos.y > 328){
+      //uncomment this line for testing
       ballVel.y *= -1;
+      lives -= 1;
     }
   }
 
@@ -214,7 +262,7 @@
     var aliveParticles = [];
     var p;
 
-    console.log('Padddle position: ', paddPos);
+    //console.log('Padddle position: ', paddPos);
 
     aliveParticles.length = 0;
     for(particle=0; particle<particles.length; particle++){
@@ -228,10 +276,10 @@
       p={
           position:{x:ballPos.x+Random.nextGaussian(0,2), y:ballPos.y+Random.nextGaussian(0,2)},
           direction:Random.nextCircleVector(),
-          speed:Random.nextGaussian(5,3),
+          speed:Random.nextGaussian(10,10),
           rotation:0,
           stroke: 'rgba(255,'+Math.floor(Random.nextGaussian(150,100))+', 0, 1)',
-          lifetime:Random.nextGaussian(0,1)
+          lifetime:Random.nextGaussian(0,.5)
       };
       particles.push(Graphics.Particle(p));
     }
@@ -242,6 +290,7 @@
     Graphics.beginRender();
     drawBricks();
     paddle.draw(paddPos,300);
+    drawLives();
     // ballPos = {x:224, y:168};
     var particle;
     for(particle=0; particle<particles.length; particle++){
@@ -279,13 +328,13 @@
   }
 
   function movePaddleRight(){
-    if(paddPos <= 448){
+    if(paddPos <= 416){
       paddPos += 5;
     }
   }
 
   function movePaddleLeft(){
-    if(paddPos >= 0){
+    if(paddPos >= 32){
       paddPos -= 5;
     }
   }
