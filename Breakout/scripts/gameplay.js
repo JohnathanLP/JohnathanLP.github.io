@@ -257,6 +257,12 @@
 
   function update(elapsedTime){
     moveBall();
+    if(ballVel.x > 0){
+      ball.rotate(.1);
+    }
+    else{
+      ball.rotate(-.1);
+    }
     checkCollisions();
     var particle = 0;
     var aliveParticles = [];

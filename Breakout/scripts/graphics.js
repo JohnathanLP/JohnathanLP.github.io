@@ -25,9 +25,11 @@ let Graphics = (function(){
     that.draw = function(xLoc, yLoc){
       if(ready){
         context.save();
-        context.translate(spec.center.x, spec.center.y);
+        //context.translate(spec.center.x, spec.center.y);
+        context.translate(xLoc, yLoc);
         context.rotate(spec.rotation);
-        context.translate(-spec.center.x, -spec.center.y);
+        //context.translate(-spec.center.x, -spec.center.y);
+        context.translate(-xLoc, -yLoc);
 
         context.drawImage(
           image,
@@ -50,6 +52,10 @@ let Graphics = (function(){
       //console.log('move left');
       myGame.screens['id-gameplay'].movePaddleLeft();
       //console.log('paddPos: ', myGame.screens['id-gameplay'].paddPos);
+    }
+
+    that.rotate = function(rot){
+      spec.rotation += rot;
     }
 
     return that;
