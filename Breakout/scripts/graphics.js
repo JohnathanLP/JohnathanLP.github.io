@@ -39,6 +39,19 @@ let Graphics = (function(){
         context.restore();
       }
     }
+
+    that.moveRight = function(){
+      console.log('move right');
+      myGame.screens['id-gameplay'].movePaddleRight();
+      //console.log('paddPos: ', myGame.screens['id-gameplay'].paddPos);
+    }
+
+    that.moveLeft = function(){
+      console.log('move left');
+      myGame.screens['id-gameplay'].movePaddleLeft();
+      //console.log('paddPos: ', myGame.screens['id-gameplay'].paddPos);
+    }
+
     return that;
   }
 

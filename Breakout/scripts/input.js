@@ -1,8 +1,8 @@
 /*jslint browser: true, white: true */
 /*global MyGame */
 // ------------------------------------------------------------------
-// 
-// This is the game object.  Everything about the game is located in 
+//
+// This is the game object.  Everything about the game is located in
 // this object.
 //
 // ------------------------------------------------------------------
@@ -13,24 +13,24 @@ var MyGame = {};
 // This is the input handler used to distribute inputs to the game objects
 //
 // ------------------------------------------------------------------
-MyGame.input = (function() {
+myGame.input = (function() {
 	'use strict';
-	
+
 	function Keyboard() {
 		var that = {
 				keys : {},
 				handlers : []
 			},
 			handler;
-		
+
 		function keyPress(e) {
 			that.keys[e.keyCode] = e.timeStamp;
 		}
-		
+
 		function keyRelease(e) {
 			delete that.keys[e.keyCode];
 		}
-		
+
 		// ------------------------------------------------------------------
 		//
 		// Allows the client code to register a keyboard handler
@@ -39,7 +39,7 @@ MyGame.input = (function() {
 		that.registerCommand = function(key, handler) {
 			that.handlers.push({ key : key, handler : handler});
 		};
-		
+
 		// ------------------------------------------------------------------
 		//
 		// Allows the client to invoke all the handlers for the registered key/handlers.
@@ -52,15 +52,15 @@ MyGame.input = (function() {
 				}
 			}
 		};
-		
+
 		//
 		// These are used to keep track of which keys are currently pressed
 		window.addEventListener('keydown', keyPress);
 		window.addEventListener('keyup', keyRelease);
-		
+
 		return that;
 	}
-	
+
 	return {
 		Keyboard : Keyboard
 	};

@@ -2,6 +2,8 @@
   'use-strict';
   var cancelNextRequest = false;
 
+  var myKeyboard = myGame.input.Keyboard();
+
   var brickArray = [];
 
   var particles = [];
@@ -89,19 +91,20 @@
     }
   }
 
+
+  //TODO - THIS IS MASSIVELY BROKEN, BLOATED AND EXCESSIVE! DELETE AND RE-WRITE
   function checkCollisions(){
     //paddle
     if(ballPos.y > 292 && ballPos.y < 300){
       var diff = paddPos-ballPos.x;
       if(Math.abs(diff) < 38){
-        //TODO special angles on bounce
         ballVel.y *= -1;
         ballVel.x += (diff/-10)-2;
-        if(ballVel.x > 10){
-          ballVel.x = 10;
+        if(ballVel.x > 7){
+          ballVel.x = 7;
         }
-        if(ballVel.x < -10){
-          ballVel.x = -10;
+        if(ballVel.x < -7){
+          ballVel.x = -7;
         }
         console.log(ballVel.x);
       }
@@ -125,21 +128,57 @@
         brickArray[ballCell.x][ballCell.y+1]=0;
       }
     }
-    //bricks to left
+    //bricks to left (including diagonal)
     if(ballPos.x % 32 < 8){
       if(ballCell.x>0){
         if(brickArray[ballCell.x-1][ballCell.y] == 1){
           ballVel.x *= -1;
           brickArray[ballCell.x-1][ballCell.y]=0;
         }
+        else if(brickArray[ballCell.x][ballCell.y+1] == 0){
+          if(ballCell.y < 11){
+            if(brickArray[ballCell.x-1][ballCell.y+1] == 1){
+              ballVel.x *= -1;
+              ballVel.y *= -1;
+              brickArray[ballCell.x-1][ballCell.y+1]=0;
+            }
+          }
+        }
+        else if(brickArray[ballCell.x][ballCell.y-1] == 0){
+          if(ballCell.y > 0){
+            if(brickArray[ballCell.x-1][ballCell.y-1] == 1){
+              ballVel.x *= -1;
+              ballVel.y *= -1;
+              brickArray[ballCell.x-1][ballCell.y-1]=0;
+            }
+          }
+        }
       }
     }
-    //bricks to right
+    //bricks to right (including diagonal)
     if(ballPos.x % 32 > 24){
       if(ballCell.x<13){
         if(brickArray[ballCell.x+1][ballCell.y] == 1){
           ballVel.x *= -1;
           brickArray[ballCell.x+1][ballCell.y]=0;
+        }
+        else if(brickArray[ballCell.x][ballCell.y+1] == 0){
+          if(ballCell.y < 11){
+            if(brickArray[ballCell.x+1][ballCell.y+1] == 1){
+              ballVel.x *= -1;
+              ballVel.y *= -1;
+              brickArray[ballCell.x+1][ballCell.y+1]=0;
+            }
+          }
+        }
+        else if(brickArray[ballCell.x][ballCell.y-1] == 0){
+          if(ballCell.y > 0){
+            if(brickArray[ballCell.x+1][ballCell.y-1] == 1){
+              ballVel.x *= -1;
+              ballVel.y *= -1;
+              brickArray[ballCell.x+1][ballCell.y-1]=0;
+            }
+          }
         }
       }
     }
@@ -147,6 +186,8 @@
 
   function initialize(){
     Graphics.initialize();
+    myKeyboard.registerCommand(KeyEvent.DOM_VK_A, paddle.moveLeft);
+  	myKeyboard.registerCommand(KeyEvent.DOM_VK_D, paddle.moveRight);
   }
 
   function moveBall(){
@@ -173,6 +214,8 @@
     var aliveParticles = [];
     var p;
 
+    console.log('Padddle position: ', paddPos);
+
     aliveParticles.length = 0;
     for(particle=0; particle<particles.length; particle++){
       if(particles[particle].update(elapsedTime)){
@@ -192,6 +235,7 @@
       };
       particles.push(Graphics.Particle(p));
     }
+    myKeyboard.update(elapsedTime);
   }
 
   function render(){
@@ -215,7 +259,6 @@
   }
 
   function run(){
-
     //initialize brickArray
     for(var i=0; i<14; i++){
       brickArray.push(new Array(10));
@@ -235,8 +278,22 @@
     requestAnimationFrame(gameLoop);
   }
 
+  function movePaddleRight(){
+    if(paddPos <= 448){
+      paddPos += 5;
+    }
+  }
+
+  function movePaddleLeft(){
+    if(paddPos >= 0){
+      paddPos -= 5;
+    }
+  }
+
   return{
     initialize: initialize,
-    run: run
+    run: run,
+    movePaddleLeft: movePaddleLeft,
+    movePaddleRight: movePaddleRight
   };
 }(myGame.game));
