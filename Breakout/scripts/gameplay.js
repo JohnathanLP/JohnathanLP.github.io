@@ -112,7 +112,7 @@
 
   function checkCollisions(){
     //paddle
-    if(ballPos.y > 292 && ballPos.y < 320 && ballVel.y > 0){
+    if(ballPos.y > 292 && ballPos.y < 300 && ballVel.y > 0){
       var diff = ballPos.x - paddPos;
       if(diff <= 36 && diff >= -36){
         ballVel.y *= -1;
