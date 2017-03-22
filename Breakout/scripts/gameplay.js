@@ -14,6 +14,12 @@
   var paddPos = 224;
 
   var lives = 3;
+  var score = 0;
+
+  var newBall = true;
+  var newBallCountdown = 0;
+  var gameOver = false;
+  var smallPaddle = false;
 
   let yellowBrick = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
@@ -22,7 +28,7 @@
     width: 32,
     height: 8,
     rotation: 0
-  })
+  });
 
   let blueBrick = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
@@ -31,7 +37,7 @@
     width: 32,
     height: 8,
     rotation: 0
-  })
+  });
 
   let orangeBrick = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
@@ -40,7 +46,7 @@
     width: 32,
     height: 8,
     rotation: 0
-  })
+  });
 
   let greenBrick = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
@@ -49,7 +55,7 @@
     width: 32,
     height: 8,
     rotation: 0
-  })
+  });
 
   let ball = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
@@ -58,7 +64,7 @@
     width: 16,
     height: 16,
     rotation: 0
-  })
+  });
 
   let paddle = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
@@ -67,7 +73,7 @@
     width: 64,
     height: 8,
     rotation: 0
-  })
+  });
 
   let life = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
@@ -76,9 +82,24 @@
     width: 64,
     height: 8,
     rotation: 0
-  })
+  });
 
-
+  let scoreDisp = Graphics.Text({
+    text : 'Score: 0',
+    font : '20px Courier New, sans-serif',
+    fill : 'rgba(0, 0, 200, 1)',
+    stroke : 'rgba(0, 0, 200, 1)',
+    pos : {x : 10, y : 10},
+    rotation : 0
+  });
+  let messDisp = Graphics.Text({
+    text : '3...',
+    font : '30px Courier New, sans-serif',
+    fill : 'rgba(0, 0, 200, 1)',
+    stroke : 'rgba(0, 0, 200, 1)',
+    pos : {x : 145, y : 150},
+    rotation : 0
+  });
 
   function drawBricks(){
     for(var i=0; i<14; i++)
@@ -106,7 +127,7 @@
 
   function drawLives(){
     for(var i=0; i<lives; i++){
-      paddle.draw(400-(70*i),20);
+      life.draw(400-(70*i),20);
     }
   }
 
@@ -114,21 +135,38 @@
     //paddle
     if(ballPos.y > 292 && ballPos.y < 300 && ballVel.y > 0){
       var diff = ballPos.x - paddPos;
-      if(diff <= 36 && diff >= -36){
+      var thresh = 40;
+      if(smallPaddle){
+        thresh = 20;
+      }
+      if(diff <= thresh && diff >= -thresh){
+        score += 2;
         ballVel.y *= -1;
         ballVel.x += (diff/10);
         //limit horizontal speed to 7
-        if(ballVel.x > 7){
-          ballVel.x = 7;
+        if(ballVel.x > 5){
+          ballVel.x = 5;
         }
-        if(ballVel.x < -7){
-          ballVel.x = -7;
+        if(ballVel.x < -5){
+          ballVel.x = -5;
         }
       }
+      console.log('velocity: x: ', ballVel.x, ' y: ', ballVel.y);
     }
 
     function breakBrick(xIn,yIn){
       //TODO - breaking brick particles
+      if(yIn == 1 && !smallPaddle){
+        //console.log('top row');
+        paddle.setClip({
+          x:16,
+          y:56,
+          w:32,
+          h:8,
+          center:{x:16,y:0}
+        });
+        smallPaddle = true;
+      }
       if(yIn > 0){
         if(yIn < 9){
           var strokeString = 'rgba(250, 250, 0, 1)'
@@ -157,6 +195,16 @@
         particles.push(Graphics.Particle(p));
       }
       brickArray[xIn][yIn]=0;
+      score++;
+      var fullRow = true;
+      for(var i=0; i<14; i++){
+        if(brickArray[i][yIn] == 1){
+          fullRow = false;
+        }
+      }
+      if(fullRow){
+        //addNewBall();
+      }
     }
 
     //bricks
@@ -164,7 +212,7 @@
     var yFlag = false;
     if(ballPos.y<=130 && ballPos.y>=40){
       var ballCell={x:Math.floor(ballPos.x/32), y:Math.floor((ballPos.y-40)/9)};
-      console.log('x: ', ballCell.x, 'y: ', ballCell.y);
+      //console.log('x: ', ballCell.x, 'y: ', ballCell.y);
       //bricks above
       if(ballCell.y>0){
         if(brickArray[ballCell.x][ballCell.y-1] == 1){
@@ -234,39 +282,96 @@
     Graphics.initialize();
     myKeyboard.registerCommand(KeyEvent.DOM_VK_A, paddle.moveLeft);
   	myKeyboard.registerCommand(KeyEvent.DOM_VK_D, paddle.moveRight);
+    myKeyboard.registerCommand(KeyEvent.DOM_VK_LEFT, paddle.moveLeft);
+  	myKeyboard.registerCommand(KeyEvent.DOM_VK_RIGHT, paddle.moveRight);
+    document.getElementById('id-button-returntomenu').addEventListener(
+      'click',
+      function(){
+        game.showScreen('id-menu');
+        cancelNextRequest = true;
+      });
   }
 
   function moveBall(){
     ballPos.x += ballVel.x;
     ballPos.y += ballVel.y;
     if(ballPos.x < 8){
+      ballPos.x = 8;
       ballVel.x *= -1;
     }
     if(ballPos.y < 8){
       ballVel.y *= -1;
     }
     if(ballPos.x > 440){
+      ballPos.x = 440;
       ballVel.x *= -1;
     }
-    if(ballPos.y > 328){
+    if(ballPos.y > 400){
       //uncomment this line for testing
-      ballVel.y *= -1;
+      //ballVel.y *= -1;
       lives -= 1;
+      if(lives > 0){
+        newBall = true;
+        ballPos = {x:224, y:200};
+        ballVel = {x:Random.nextGaussian(0,2), y:3};
+      }
+    }
+    if(ballPos.y > 200){
+      //ballVel.y *= -1;
+    }
+  }
+
+  function ballStart(elapsedTime){
+    if(smallPaddle)
+    {
+      paddle.setClip({
+        x:0,
+        y:56,
+        w:64,
+        h:8,
+        center:{x:32,y:0}
+      });
+      smallPaddle = false;
+    }
+    newBallCountdown += elapsedTime;
+    if(newBallCountdown >= 0 && newBallCountdown < 1000){
+      messDisp.setText('3...');
+    }
+    if(newBallCountdown >= 1000 && newBallCountdown < 2000){
+      messDisp.setText('2...');
+    }
+    if(newBallCountdown >= 2000 && newBallCountdown < 3000){
+      messDisp.setText('1...');
+    }
+    messDisp.centerText();
+    //console.log(newBallCountdown);
+    if(newBallCountdown >= 3000){
+      newBall = false;
+      newBallCountdown = 0;
     }
   }
 
   function update(elapsedTime){
-    moveBall();
-    if(ballVel.x > 0){
-      ball.rotate(.1);
+    //If not waiting for a new ball...
+    if(!newBall && !gameOver){
+        moveBall();
+        checkCollisions();
     }
-    else{
-      ball.rotate(-.1);
+    //If waiting for a new ball...
+    else if(!gameOver){
+        ballStart(elapsedTime);
     }
-    checkCollisions();
+    //Always
+    if(lives < 0){
+      gameOver = true;
+      messDisp.setText('Game Over!');
+      messDisp.centerText();
+    }
     var particle = 0;
     var aliveParticles = [];
     var p;
+
+    scoreDisp.setText('Score: ' + score);
 
     //console.log('Padddle position: ', paddPos);
 
@@ -290,6 +395,12 @@
       particles.push(Graphics.Particle(p));
     }
     myKeyboard.update(elapsedTime);
+    if(ballVel.x > 0){
+      ball.rotate(.1);
+    }
+    else{
+      ball.rotate(-.1);
+    }
   }
 
   function render(){
@@ -297,12 +408,16 @@
     drawBricks();
     paddle.draw(paddPos,300);
     drawLives();
+    scoreDisp.draw();
     // ballPos = {x:224, y:168};
     var particle;
     for(particle=0; particle<particles.length; particle++){
       particles[particle].draw();
     }
     ball.draw(ballPos.x,ballPos.y);
+    if(newBall || gameOver){
+      messDisp.draw();
+    }
   }
 
   function gameLoop(time){
@@ -310,7 +425,9 @@
     update(elapsedTime);
     lastTimeStamp=time;
     render();
-    requestAnimationFrame(gameLoop);
+    if(!cancelNextRequest){
+      requestAnimationFrame(gameLoop);
+    }
   }
 
   function run(){
@@ -329,19 +446,52 @@
       }
     }
 
+    // paddle.setClip({
+    //   x:16,
+    //   y:56,
+    //   w:32,
+    //   h:8,
+    //   center:{x:16,y:0}
+    // });
+    // smallPaddle = true;
+
+    score = 0;
+    newBall = true;
+    lives = 3;
+    gameOver = false;
+    smallPaddle = false;
+    ballPos = {x:224, y:200};
+    ballVel = {x:Random.nextGaussian(0,2), y:3};
+    paddPos = 224;
+    newBallCountdown = -1000;
+
     cancelNextRequest = false;
     requestAnimationFrame(gameLoop);
   }
 
   function movePaddleRight(){
-    if(paddPos <= 416){
-      paddPos += 5;
+    if(!smallPaddle){
+      if(paddPos <= 416){
+        paddPos += 5;
+      }
+    }
+    else{
+      if(paddPos <= 432){
+        paddPos += 5;
+      }
     }
   }
 
   function movePaddleLeft(){
-    if(paddPos >= 32){
-      paddPos -= 5;
+    if(!smallPaddle){
+      if(paddPos >= 32){
+        paddPos -= 5;
+      }
+    }
+    else{
+      if(paddPos >= 16){
+        paddPos -= 5;
+      }
     }
   }
 

@@ -1,7 +1,10 @@
 #id-game{
 	position: absolute;
-	left: 0;
 	top: 0;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
 	width: 800px;
 	height: 600px;
 	background-color: rgb(50,50,50);
@@ -10,6 +13,10 @@
 
 #id-game .screen {
 	position: absolute;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
 	width: 100%;
 	height: 100%;
 	display: none;
@@ -21,7 +28,7 @@
 }
 
 #id-menu{
-  text-align: center;
+
 }
 
 #id-gameplay{
@@ -29,12 +36,51 @@
 	height:100%;
 }
 
+#id-gpbottombar{
+	background-color: rgb(150,150,150);
+	font-size: 20px;
+	text-align: center;
+	border: solid;
+	border-color: black;
+	width: 100%;
+	height: 28px;
+}
+
+#id-menubottombar{
+	background-color: rgb(150,150,150);
+	font-size: 20px;
+	text-align: center;
+	border: solid;
+	border-color: black;
+	width: 100%;
+	height: 28px;
+}
+
+#id-titlediv{
+	height: 610px;
+}
+
+#id-title{
+	position: absolute;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 60%;
+}
+
 ul{
-	line-height: 3;
 	list-style: none;
 }
 
+body{
+	background: gray;
+}
+
 canvas{
+	margin-left: auto;
+	margin-right: auto;
 	height: 100%;
 	width: 100%;
 	image-rendering: pixelated;

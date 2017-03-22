@@ -27,7 +27,7 @@ myGame.game = (function(screens){
       }
     }
 
-    showScreen('id-gameplay');
+    showScreen('id-menu');
   }
 
   return{
