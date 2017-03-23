@@ -7,7 +7,8 @@
 	right: 0;
 	width: 800px;
 	height: 600px;
-	background-color: rgb(50,50,50);
+	background: radial-gradient(circle, grey , black);
+	/*background-color: rgb(50,50,50);*/
 	font-size: 40px;
 }
 
@@ -88,6 +89,7 @@
 #id-creditsdiv{
 	height: 610px;
 	text-align: center;
+	vertical-align: middle;
 }
 
 #id-title{
@@ -100,9 +102,17 @@
 	height: 60%;
 }
 
+#id-credits{
+	vertical-align: middle;
+}
+
 p1{
 	color: rgb(200,200,200);
 	vertical-align: middle;
+}
+
+p2{
+	font-size: 16px;
 }
 
 ul{
@@ -111,6 +121,8 @@ ul{
 
 body{
 	background: gray;
+	font-family: verdana;
+	color: black;
 }
 
 canvas{

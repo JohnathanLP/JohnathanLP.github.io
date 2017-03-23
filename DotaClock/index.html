@@ -3,12 +3,34 @@
 <head>
   <meta charset = "UTF-8">
   <title> Dota Clocks </title>
+  <link rel = "stylesheet" type = "text/css" href = "styles/dotaclock.css">
 </head>
 <body>
-  <h1 style="text-align: center; background: blue; color: white;"> DOTA Clock </h1>
+  <h1 style="text-align: center; background: blue; color: white;"> Clock Trainer </h1>
+  <table id="id-table-maintable">
+    <tr>
+      <td id="id-td-starttime">Start time: <input id="id-input-starttime" value="0"> <button id="id-button-begin" onclick="startClock()">Start</button></td>
+      <td id="id-td-gametime">Current Time: <p1 id="id-p1-gametime"> time here</p1><button id="id-button-stop" onclick="stopClock()">Stop</button><button id="id-button-resume" onclick="resumeClock()">Resume</button><button id="id-button-reset" onclick="resetClock()">Reset</button></td>
+    </tr>
+    <tr>
+      <td class = "timertitle">Courier Upgrade: </td>
+      <td class = "timerbar"><progress id="id-progress-courierupgrade" value = "0" max = "180"></progress><p2 id="id-p2-courierupgrade"> countdown here </p2></td>
+    </tr>
+    <tr>
+      <td class = "timertitle">Rune Spawn: </td>
+      <td class = "timerbar"> <progress id="id-progress-runespawn" value = "0" max = "120"></progress><p2 id="id-p2-runespawn"> countdown here </p2></td>
+    </tr>
+    <tr>
+      <td class = "timertitle">Ward Purchase: </td>
+      <td class = "timerbar"> <progress id="id-progress-wardpurchase" value = "0" max = "180"></progress><p2 id="id-p2-wardpurchase"> countdown here </p2></td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+  </table>
   <p style="text-align: center;">
-    Work in Progress </br>
     <a href="../index.html"> Return to Home </a> </br>
   </p>
+  <script src="scripts/dotaclock.js"></script>
 </body>
 </html>

@@ -1,0 +1,33 @@
+#id-table-maintable{
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#id-td-starttime{
+  width: 50%
+}
+
+#id-td-gametime{
+  width: 50%
+}
+
+#id-td-wardpurchase{
+  width: 50%
+}
+
+#id-button-stop{
+  float: right;
+}
+
+#id-button-resume{
+  float: right;
+}
+
+#id-button-reset{
+  float: right;
+}
+
+.timertitle{
+  text-align: left;
+}

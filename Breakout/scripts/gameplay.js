@@ -88,16 +88,16 @@
   let scoreDisp = Graphics.Text({
     text : 'Score: 0',
     font : '20px Courier New, sans-serif',
-    fill : 'rgba(0, 0, 200, 1)',
-    stroke : 'rgba(0, 0, 200, 1)',
+    fill : 'rgba(200, 200, 200, 1)',
+    stroke : 'rgba(200, 200, 200, 1)',
     pos : {x : 10, y : 10},
     rotation : 0
   });
   let messDisp = Graphics.Text({
     text : '3...',
     font : '30px Courier New, sans-serif',
-    fill : 'rgba(0, 0, 200, 1)',
-    stroke : 'rgba(0, 0, 200, 1)',
+    fill : 'rgba(200, 200, 200, 1)',
+    stroke : 'rgba(200, 200, 200, 1)',
     pos : {x : 145, y : 150},
     rotation : 0
   });
@@ -249,22 +249,43 @@
     if(ballPos.y<=130 && ballPos.y>=40){
       var ballCell={x:Math.floor(ballPos.x/32), y:Math.floor((ballPos.y-40)/9)};
       //console.log('x: ', ballCell.x, 'y: ', ballCell.y);
+
       //bricks above
       if(ballCell.y>0){
         if(brickArray[ballCell.x][ballCell.y-1] == 1){
           yFlag = true;
           breakBrick(ballCell.x, ballCell.y-1);
         }
+        //right up diag
+        else if(ballPos.x % 32 > 24 && brickArray[ballCell.x+1][ballCell.y-1] == 1){
+          yFlag = true;
+          breakBrick(ballCell.x+1, ballCell.y-1);
+        }
+        //left up diag
+        else if(ballPos.x % 32 < 8 && brickArray[ballCell.x-1][ballCell.y-1] == 1){
+          yFlag = true;
+          breakBrick(ballCell.x-1, ballCell.y-1);
+        }
       }
       //bricks below
-      if(ballCell.y<11){
+      else if(ballCell.y<11){
         if(brickArray[ballCell.x][ballCell.y+1] == 1){
           yFlag = true;
           breakBrick(ballCell.x, ballCell.y+1);
         }
+        //right down diag
+        else if(ballPos.x % 32 > 24 && brickArray[ballCell.x+1][ballCell.y+1] == 1){
+          yFlag = true;
+          breakBrick(ballCell.x+1, ballCell.y+1);
+        }
+        //left down diag
+        else if(ballPos.x % 32 < 8 && brickArray[ballCell.x-1][ballCell.y+1] == 1){
+          yFlag = true;
+          breakBrick(ballCell.x-1, ballCell.y+1);
+        }
       }
       //bricks to right
-      if(ballPos.x % 32 > 24){
+      else if(ballPos.x % 32 > 24){
         if(ballCell.x<13){
           if(brickArray[ballCell.x+1][ballCell.y] == 1){
             xFlag = true;
@@ -285,7 +306,7 @@
         }
       }
       //bricks to left
-      if(ballPos.x % 32 < 8){
+      else if(ballPos.x % 32 < 8){
         if(ballCell.x>0){
           if(brickArray[ballCell.x-1][ballCell.y] == 1){
             xFlag = true;
@@ -349,7 +370,7 @@
       if(lives > 0){
         newBall = true;
         ballPos = {x:224, y:200};
-        ballVel = {x:Random.nextGaussian(0,2), y:3};
+        ballVel = {x:Random.nextGaussian(0,2), y:1};
       }
     }
     if(ballPos.y > 200){
@@ -401,6 +422,13 @@
     if(lives < 0){
       gameOver = true;
       messDisp.setText('Game Over!');
+      messDisp.centerText();
+      Persistence.add(score,score);
+    }
+
+    if(bricksBroken >= 112){
+      gameOver = true;
+      messDisp.setText('You win!');
       messDisp.centerText();
       Persistence.add(score,score);
     }
