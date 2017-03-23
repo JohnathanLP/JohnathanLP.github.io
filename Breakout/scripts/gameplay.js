@@ -10,7 +10,7 @@
   var lastTimeStamp = performance.now();
 
   var ballPos = {x:224, y:200};
-  var ballVel = {x:1, y:3};
+  var ballVel = {x:1, y:1};
   var paddPos = 224;
 
   var lives = 3;
@@ -20,6 +20,7 @@
   var newBallCountdown = 0;
   var gameOver = false;
   var smallPaddle = false;
+  var bricksBroken = 0;
 
   let yellowBrick = Graphics.Texture({
     imageSource: 'images/breakouttextures.png',
@@ -140,7 +141,6 @@
         thresh = 20;
       }
       if(diff <= thresh && diff >= -thresh){
-        score += 2;
         ballVel.y *= -1;
         ballVel.x += (diff/10);
         //limit horizontal speed to 7
@@ -170,15 +170,19 @@
       if(yIn > 0){
         if(yIn < 9){
           var strokeString = 'rgba(250, 250, 0, 1)'
+          score += 1;
         }
         if(yIn < 7){
           var strokeString = 'rgba(250, 100, 0, 1)'
+          score += 2;
         }
         if(yIn < 5){
           var strokeString = 'rgba(0, 0, 250, 1)'
+          score += 3;
         }
         if(yIn < 3){
           var strokeString = 'rgba(0, 250, 0, 1)'
+          score += 5;
         }
       }
       for(particle=0; particle<50; particle++){
@@ -195,7 +199,39 @@
         particles.push(Graphics.Particle(p));
       }
       brickArray[xIn][yIn]=0;
-      score++;
+      bricksBroken++;
+      if(bricksBroken >= 0 && bricksBroken < 4){
+        if(ballVel.y < 0){
+          ballVel.y = -1;
+        }
+        else{
+          ballVel.y = 1;
+        }
+      }
+      else if(bricksBroken >= 4 && bricksBroken < 12){
+        if(ballVel.y < 0){
+          ballVel.y = -2;
+        }
+        else{
+          ballVel.y = 2;
+        }
+      }
+      else if(bricksBroken >= 12 && bricksBroken < 36){
+        if(ballVel.y < 0){
+          ballVel.y = -3;
+        }
+        else{
+          ballVel.y = 3;
+        }
+      }
+      else if(bricksBroken >= 62){
+        if(ballVel.y < 0){
+          ballVel.y = -4;
+        }
+        else{
+          ballVel.y = 4;
+        }
+      }
       var fullRow = true;
       for(var i=0; i<14; i++){
         if(brickArray[i][yIn] == 1){
@@ -203,7 +239,7 @@
         }
       }
       if(fullRow){
-        //addNewBall();
+        score += 25;
       }
     }
 
@@ -284,7 +320,7 @@
   	myKeyboard.registerCommand(KeyEvent.DOM_VK_D, paddle.moveRight);
     myKeyboard.registerCommand(KeyEvent.DOM_VK_LEFT, paddle.moveLeft);
   	myKeyboard.registerCommand(KeyEvent.DOM_VK_RIGHT, paddle.moveRight);
-    document.getElementById('id-button-returntomenu').addEventListener(
+    document.getElementById('id-button-gpreturntomenu').addEventListener(
       'click',
       function(){
         game.showScreen('id-menu');
@@ -366,6 +402,7 @@
       gameOver = true;
       messDisp.setText('Game Over!');
       messDisp.centerText();
+      Persistence.add(score,score);
     }
     var particle = 0;
     var aliveParticles = [];
@@ -396,10 +433,10 @@
     }
     myKeyboard.update(elapsedTime);
     if(ballVel.x > 0){
-      ball.rotate(.1);
+      ball.rotate(.05*ballVel.x);
     }
     else{
-      ball.rotate(-.1);
+      ball.rotate(.05*ballVel.x);
     }
   }
 
@@ -446,14 +483,13 @@
       }
     }
 
-    // paddle.setClip({
-    //   x:16,
-    //   y:56,
-    //   w:32,
-    //   h:8,
-    //   center:{x:16,y:0}
-    // });
-    // smallPaddle = true;
+    paddle.setClip({
+      x:0,
+      y:56,
+      w:64,
+      h:8,
+      center:{x:32,y:0}
+    });
 
     score = 0;
     newBall = true;
@@ -461,9 +497,10 @@
     gameOver = false;
     smallPaddle = false;
     ballPos = {x:224, y:200};
-    ballVel = {x:Random.nextGaussian(0,2), y:3};
+    ballVel = {x:Random.nextGaussian(0,2), y:1};
     paddPos = 224;
     newBallCountdown = -1000;
+    bricksBroken = 0;
 
     cancelNextRequest = false;
     requestAnimationFrame(gameLoop);

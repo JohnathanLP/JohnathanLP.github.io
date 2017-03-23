@@ -5,6 +5,12 @@ myGame.screens["id-menu"] = (function(game){
     document.getElementById('id-button-newgame').addEventListener(
       'click',
       function(){game.showScreen('id-gameplay');});
+    document.getElementById('id-button-highscores').addEventListener(
+      'click',
+      function(){game.showScreen('id-highscores');});
+    document.getElementById('id-button-credits').addEventListener(
+      'click',
+      function(){game.showScreen('id-credits');});
   }
 
   function run(){

@@ -21,8 +21,31 @@
     </div>
     <div id='id-gameplay' class="screen">
       <div><canvas id='id-canvasmain' width="448" height="336"></div>
-			<div id="id-gpbottombar"><button id="id-button-returntomenu">Return to Menu</button></div>
+			<div id="id-gpbottombar"><button id="id-button-gpreturntomenu">Return to Menu</button></div>
     </div>
+		<div id='id-highscores' class="screen">
+			<div id="id-hsdiv">
+				<p1> High Scores: </p1>
+				<ul>
+					<li id='id-hs1' class='hs-listing'></li>
+					<li id='id-hs2' class='hs-listing'></li>
+					<li id='id-hs3' class='hs-listing'></li>
+					<li id='id-hs4' class='hs-listing'></li>
+					<li id='id-hs5' class='hs-listing'></li>
+				</ul>
+      </div>
+			<div id="id-hsbottombar">
+				<button id="id-button-hsreturntomenu">Return to Menu</button>
+				<button id="id-button-reseths">Reset High Scores</button>
+			</div>
+		</div>
+		<div id='id-credits' class="screen">
+			<div id="id-creditsdiv"><p1>
+				Credits: </br>
+				Game and art by Johnathan Powell
+      </p1></div>
+			<div id="id-creditsbottombar"><button id="id-button-creditsreturntomenu">Return to Menu</button></div>
+		</div>
   </div>
 
   <script src = "scripts/game.js"></script>
@@ -30,6 +53,9 @@
 	<script src = "scripts/graphics.js"></script>
   <script src = "scripts/mainmenu.js"></script>
   <script src = "scripts/gameplay.js"></script>
+	<script src = "scripts/highscores.js"></script>
+	<script src = "scripts/credits.js"></script>
+	<script src = "scripts/persistence.js"></script>
 	<script src = "scripts/random.js"></script>
 </body>
 </html>
