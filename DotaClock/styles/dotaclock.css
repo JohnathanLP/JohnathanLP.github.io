@@ -28,6 +28,10 @@
   float: right;
 }
 
+.warning{
+  color: red;
+}
+
 .timertitle{
   text-align: left;
 }

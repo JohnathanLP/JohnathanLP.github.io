@@ -1,13 +1,13 @@
-var startTime = 0;
-var initialTime = 0;
 var running = false;
 var gameTimeSec = 0;
 var paused = false;
+var thisTime = 0;
+var lastTime = 0;
+var runTime = 0;
 
 function startClock(){
   if(!running){
-    initialTime = document.getElementById('id-input-starttime').value;
-    startTime = performance.now() - (document.getElementById('id-input-starttime').value*1000);
+    lastTime = performance.now();
     running = true;
   }
 }
@@ -51,9 +51,10 @@ function formatTimeSec(timeIn){
 
 function update(elapsedTime){
   if(running){
-    if(!isNaN(elapsedTime)){
-      gameTimeSec = Math.floor((elapsedTime - startTime)/1000);// + initialTime;
-    }
+    thisTime = performance.now();
+    runTime += (thisTime-lastTime);
+
+    gameTimeSec = Math.floor(runTime/1000);
 
     document.getElementById('id-p1-gametime').innerHTML = formatTimeSec(gameTimeSec);
 
@@ -74,8 +75,18 @@ function update(elapsedTime){
       document.getElementById('id-progress-wardpurchase').value = gameTimeSec%150;
       document.getElementById('id-p2-wardpurchase').innerHTML = 150-(gameTimeSec%150);
     }
-  }
 
+    var countdownNumbers = document.getElementsByTagName('p2');
+    var iter;
+    for(iter in countdownNumbers){
+      //console.log(countdownNumbers[iter].innerHTML);
+      if(countdownNumbers[iter].innerHTML <= 90){
+        //console.log('warning');
+        countdownNumbers[iter].classList.add('warning');
+      }
+    }
+    lastTime = thisTime;
+  }
   requestAnimationFrame(update);
 }
 
