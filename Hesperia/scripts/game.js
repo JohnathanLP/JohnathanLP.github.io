@@ -14,7 +14,7 @@ myGame.game = (function(screens) {
 			active[screen].classList.remove('active');
 		}
 
-		//screens[id].run();
+		screens[id].run();
 
 		document.getElementById(id).classList.add('active');
 	}

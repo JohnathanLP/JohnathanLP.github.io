@@ -13,7 +13,9 @@ let AudioPlayer = (function(){
 	//This might be a control that we want in options
 	//https://www.w3schools.com/tags/av_prop_volume.asp
 	function updateVolume(level){
-
+    console.log(myGame.sounds['audio/desert'].volume);
+    myGame.sounds['audio/desert'].volume = level;
+    myGame.sounds['audio/desert'].currentTime = 0;
 	}
 
 	function loadAudio() {
@@ -39,6 +41,7 @@ let AudioPlayer = (function(){
     initialize: initialize,
 		loadSound: loadSound,
 		loadAudio: loadAudio,
-		playSound: playSound
+		playSound: playSound,
+    updateVolume: updateVolume
   }
 }());

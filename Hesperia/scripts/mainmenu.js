@@ -16,6 +16,10 @@ myGame.screens['main-menu'] = (function(game) {
 			'click',
 			function() { game.showScreen('options'); });
 
+		document.getElementById('id-sound').addEventListener(
+			'click',
+			function() { game.showScreen('sound'); });
+
 		document.getElementById('id-credits').addEventListener(
 			'click',
 			function() { game.showScreen('credits'); });

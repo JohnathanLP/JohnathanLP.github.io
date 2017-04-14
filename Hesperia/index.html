@@ -5,8 +5,29 @@
   <title> HESPERIA: Land of the Setting Sun </title>
   <link rel = "stylesheet" type = "text/css" href = "hesperia.css">
   <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <script>
+  function setVolume(level) {
+    AudioPlayer.updateVolume(level);
+  }
+  </script>
+
+  <script type="text/javascript">
+    function detectkeys(e){
+      var evtobj=window.event? event : e
+      var character = String.fromCharCode(evtobj.which);
+
+      var text = document.getElementById('jumpKeyCode').innerHTML;
+    	text = "<p>You have chosen the ";
+    	text += character;
+      text +=" key to jump!</p>";
+    	document.getElementById('jumpKeyCode').innerHTML = text;
+    }
+
+
+</script>
 </head>
 <body onload="myGame.game.initialize()">
+
 <div id = "game">
 
   <div id = "main-menu" class = "screen">
@@ -21,7 +42,9 @@
       <nav class="cl-effect-21">
         &emsp;&emsp;&emsp;<a id = "id-new-game" href="#"><span>New Run</span></a>
         <br>
-        &emsp;&emsp;&emsp;<a id = "id-options" href="#"><span>Options</span></a>
+        &emsp;&emsp;&emsp;<a id = "id-options" href="#"><span>Controls</span></a>
+        <br>
+        &emsp;&emsp;&emsp;<a id = "id-sound" href="#"><span>Sound</span></a>
         <br>
         &emsp;&emsp;&emsp;<a id = "id-high-scores" href="#"><span>Scores</span></a>
         <br>
@@ -36,7 +59,7 @@
     <div style="width: 30%; float: left;">
       <section class="color-10">
       <nav class="cl-effect-21">
-        <a id = "id-game-play-back" href="#" data-hover="New Run"><span>Back</span></a>
+        <a id = "id-game-play-back" href="#"><span>Back</span></a>
       </nav>
     </section>
     </div>
@@ -49,11 +72,11 @@
   </div>
 
   <div id = "high-scores" class = "screen" style="text-align:center;">
-		<h2> High Scores</h2>
+		<h3> High Scores</h3>
     <div id="highScoresList"></div>
     <section class="color-10">
       <nav class="cl-effect-21">
-        <a id = "id-clear-scores" href="#" onclick="Persistence.clearHighScores();"><span>Clear Scores</span></a>
+        <a id = "id-clear-scores" href="#" ><span>Clear Scores</span></a>
       </nav>
     </section>
       <section class="color-10">
@@ -64,9 +87,10 @@
 	</div>
 
   <div id = "options" class = "screen" style="text-align:center;">
-		<h2>Options</h2>
-		<p>Music</p>
-    <p>Reconfigurable Controls</p>
+		<h3>Reconfigure Controls</h3>
+      <p>JUMP key:<input type="text" size="10" maxlength="1" onkeypress="detectkeys()" onkeydown="Persistence.add(event.keyCode)" name="jumpKeyCode"><br></p>
+        <p><span id="jumpKeyCode"></span></p>
+
     <section class="color-10">
       <nav class="cl-effect-21">
         <a id = "id-options-back" href="#"><span>Back</span></a>
@@ -74,9 +98,23 @@
     </section>
 	</div>
 
+  <div id = "sound" class = "screen" style="text-align:center;">
+		<h2>Sound</h2>
+      <nav class="cl-effect-22 someClass">
+        <a href="#" onclick = "setVolume(1)"><span>Full Volume</span></a><br>
+        <a href="#" onclick = "setVolume(0.3)"><span>Half Volume</span></a><br>
+        <a href="#" onclick = "setVolume(0)"><span>No Sound</span></a><br>
+      </nav>
+    <section class="color-10">
+      <nav class="cl-effect-21">
+        <a id = "id-sound-back" href="#"><span>Back</span></a>
+      </nav>
+    </section>
+	</div>
+
 
   <div id = "credits" class = "screen" style="text-align:center;">
-		<h2>Credits</h2>
+		<h3>Credits</h3>
     <br>
 		<p>Hesperia was created by Johnathan Powell and Haley Chambers!</p>
     <p>All of the artwork and music are originals.</p>
@@ -96,7 +134,9 @@
   <script src = "scripts/random.js"></script>
   <script src = "scripts/credits.js"></script>
   <script src = "scripts/options.js"></script>
+  <script src = "scripts/sound.js"></script>
   <script src = "scripts/audioPlayer.js"></script>
   <script src = "scripts/highScores.js"></script>
+  <script src = "scripts/persistence.js"></script>
 </body>
 </html>

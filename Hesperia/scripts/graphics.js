@@ -110,6 +110,24 @@ let Graphics = (function(){
       spec.clip.y = frame.y*32;
     }
 
+    that.jump = function(){
+      console.log("WTF");
+    }
+
+    that.move = function(x,y){
+      spec.position.x += x;
+      spec.position.y += y;
+    }
+
+    that.getY = function(){
+      return spec.position.y;
+    }
+
+    that.setPosition = function(x,y){
+      spec.position.x = x;
+      spec.position.y = y;
+    }
+
     that.addAnimation = function(spec){
       //TODO - filter and check that animations are valid
       animations[spec.name] = spec;
@@ -120,6 +138,7 @@ let Graphics = (function(){
     that.setAnimation = function(spec){
       currentAnimation = spec;
       counter = 0;
+      frame = 0;
     }
 
     that.animate = function(elapsedTime, speed){
