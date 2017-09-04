@@ -1,0 +1,102 @@
+<canvas id="gc" width="640" height="480"></canvas>
+<script>
+  //paddle positions and size
+  paddPos1=paddPos2=40;
+  paddThick=10;
+  paddHeight=100;
+
+  //ball position, velocity and size
+  ballX=ballY=50;
+  ballDim=5;
+  xVel=yVel=4;
+
+  //ai paddle speed
+  aiSpeed=3;
+
+  //scores
+  score1=score2=0;
+
+  //runs once when page opens
+  window.onload=function(){
+    c=document.getElementById('gc');
+    cc=c.getContext('2d');
+    //runs update function 30 times a second
+    setInterval(update,1000/30);
+    //handles player input
+    c.addEventListener('mousemove',function(e) {
+      paddPos1 = e.clientY-paddHeight/2;
+    });
+    reset();
+  }
+
+  //moves ball to middle of screen, resets velocity
+  function reset(){
+    ballX=c.width/2;
+    ballY=c.height/2;
+    xVel=-xVel;
+    yVel=4;
+  }
+
+  function update(){
+    //move ball
+    ballX+=xVel;
+    ballY+=yVel;
+
+    //bounce off of top and bottom of screen
+    if(ballY<0 && yVel<0){
+      yVel=-yVel;
+    }
+    if(ballY>c.height && yVel>0){
+      yVel=-yVel;
+    }
+
+    //bounce off of sides or paddles, increment scores
+    if(ballX<0+paddThick+ballDim/2){
+      if(ballY>paddPos1 && ballY<paddPos1+paddHeight){
+        xVel=-xVel;
+        dy=ballY-(paddPos1+paddHeight/2);
+        yVel=dy*.1;
+      }else{
+        score2++;
+        reset();
+      }
+    }
+    if(ballX>c.width-paddThick-ballDim/2){
+      if(ballY>paddPos2 && ballY<paddPos2+paddHeight){
+        xVel=-xVel;
+        dy=ballY-(paddPos2+paddHeight/2);
+        yVel=dy*.1;
+      }else{
+        score1++;
+        reset();
+      }
+    }
+
+    //handle AI
+    if(paddPos2+paddHeight/2<ballY){
+      paddPos2+=aiSpeed;
+    }else{
+      paddPos2-=aiSpeed;
+    }
+
+    //rendering
+    //background and border
+    cc.fillStyle='gray';
+    cc.fillRect(0,0,c.width,c.height);
+    cc.fillStyle='black';
+    cc.strokeRect(0,0,c.width,c.height);
+    //set font and size
+    cc.font="20px Georgia";
+    //player 1 paddle and score
+    cc.fillStyle='red';
+    cc.fillRect(0,paddPos1,paddThick,paddHeight);
+    cc.fillText(score1,100,100);
+    //player 2 paddle and score
+    cc.fillStyle='blue';
+    cc.fillRect(c.width-paddThick,paddPos2,paddThick,paddHeight);
+    cc.fillText(score2,c.width-100,100);
+    //ball
+    cc.fillStyle='black';
+    cc.fillRect(ballX-ballDim/2,ballY-ballDim/2,ballDim,ballDim);
+  }
+</script>
