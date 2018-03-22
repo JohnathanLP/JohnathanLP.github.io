@@ -1,0 +1,71 @@
+body{
+  background-color: lightgray;
+}
+
+table {
+  width: 100%;
+  border: thick solid;
+  border-color: blue;
+  background-color: white;
+}
+
+a:link {
+  color:blue;
+}
+
+a:visited {
+  color:dodgerblue;
+}
+
+.textbox {
+  color:black;
+  font-size: 12pt;
+  text-align: center;
+}
+
+.titlebar {
+  background: blue;
+  color:yellow;
+  font-size: 24pt;
+  text-align: center;
+}
+
+.homebutton {
+  background: blue;
+  color:yellow;
+  font-size: 15pt;
+  text-align: center;
+}
+
+.sectionheader {
+  background: lightgray;
+  color:black;
+  font-size: 14pt;
+  text-align: center;
+}
+
+.footer {
+  background: lightgray;
+  color:black;
+  font-size: 10pt;
+  text-align: center;
+}
+
+#id-middlerow {
+  height: 500px;
+}
+
+#id-middleleft {
+  width: 60%;
+  vertical-align: top;
+}
+
+#html-console {
+  height: 500px;
+  overflow: scroll;
+}
+
+#id-middleright {
+  font-size:16pt;
+  vertical-align: top
+}
